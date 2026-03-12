@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Duralex® — Table en Vie AR</title>
+
+<!-- AR.js + A-Frame : la combo la plus compatible iOS/Android -->
+<script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+<script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Barlow:wght@300;400;500;600&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bleu:       #1a3a6b;
+  --bleu-vif:   #1e4d9b;
+  --blanc:      #ffffff;
+  --creme:      #faf8f5;
+  --gris:       #5a6478;
+  --gris-clair: #dde3ed;
+  --bleu-pale:  #f0f4fa;
+}
+
+body {
+  font-family: 'Barlow', sans-serif;
+  overflow: hidden;
+  width: 100vw; height: 100vh;
+  background: #000;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Cache les éléments A-Frame par défaut */
+a-scene { position: fixed; inset: 0; z-index: 1; }
+
+/* ══ SPLASH ══ */
+#splash {
+  position: fixed; inset: 0; z-index: 300;
+  display: flex; flex-direction: column;
+  background: var(--bleu);
+}
+#splash.hidden { display: none; }
+
+.splash-hero {
+  flex: 1;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 26px; padding: 56px 36px 32px;
+  background: linear-gradient(160deg, #1a3a6b 0%, #0d2247 100%);
+  position: relative; overflow: hidden;
+}
+.splash-hero::before {
+  content: ''; position: absolute;
+  width: 420px; height: 420px; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.05);
+  top: -140px; right: -130px;
+}
+.splash-logo-wrap {
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  position: relative; z-index: 1;
+}
+.splash-logo-wrap svg { width: 200px; height: auto; }
+.splash-made {
+  font-size: 9px; letter-spacing: 4px;
+  color: rgba(255,255,255,0.4); text-transform: uppercase;
+}
+.splash-line {
+  width: 36px; height: 2px; background: rgba(255,255,255,0.25);
+  border-radius: 1px; position: relative; z-index: 1;
+}
+.splash-title {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 28px; font-weight: 400; color: var(--blanc);
+  text-align: center; line-height: 1.3;
+  position: relative; z-index: 1;
+}
+.splash-title em { font-style: italic; color: rgba(255,255,255,0.6); }
+.splash-desc {
+  font-size: 13px; line-height: 1.85; color: rgba(255,255,255,0.5);
+  text-align: center; max-width: 290px;
+  position: relative; z-index: 1;
+}
+
+/* Instruction marqueur */
+.marker-box {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 8px; padding: 16px 20px;
+  text-align: center; max-width: 300px;
+  position: relative; z-index: 1;
+}
+.marker-box p {
+  font-size: 11px; color: rgba(255,255,255,0.65);
+  line-height: 1.8; letter-spacing: 0.5px;
+}
+.marker-box strong { color: #fff; font-weight: 500; }
+
+/* Hiro marker preview */
+.marker-preview {
+  width: 70px; height: 70px; margin: 0 auto 10px;
+  background: white; border: 3px solid white;
+  border-radius: 4px; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.compat-row {
+  display: flex; gap: 12px; position: relative; z-index: 1;
+}
+.compat-badge {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 40px; padding: 7px 14px;
+  font-size: 10px; letter-spacing: 1px;
+  color: rgba(255,255,255,0.65);
+}
+.splash-bottom {
+  background: var(--creme);
+  padding: 24px 28px 48px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.btn-bleu {
+  width: 100%; padding: 16px;
+  background: var(--bleu); color: var(--blanc);
+  border: none; border-radius: 3px;
+  font-family: 'Barlow', sans-serif;
+  font-size: 11px; font-weight: 500; letter-spacing: 3px;
+  text-transform: uppercase; cursor: pointer;
+  pointer-events: all; transition: background 0.2s;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+.btn-bleu:active { background: var(--bleu-vif); }
+.btn-outline-bleu {
+  width: 100%; padding: 13px;
+  background: transparent; color: var(--bleu);
+  border: 1.5px solid var(--bleu); border-radius: 3px;
+  font-family: 'Barlow', sans-serif;
+  font-size: 11px; letter-spacing: 3px;
+  text-transform: uppercase; cursor: pointer;
+  pointer-events: all;
+}
+.btn-outline-bleu:active { background: var(--bleu-pale); }
+
+/* ══ UI OVERLAY ══ */
+#ui {
+  position: fixed; inset: 0; z-index: 20;
+  pointer-events: none;
+  display: none;
+}
+#ui.active { display: block; }
+
+#header {
+  position: absolute; top: 0; left: 0; right: 0; height: 62px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 20px;
+  background: rgba(26,58,107,0.88);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+}
+#logoBtn {
+  cursor: pointer; pointer-events: all;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity 0.2s;
+}
+#logoBtn:active { opacity: 0.7; }
+#logoBtn svg { height: 26px; }
+
+#statusPill {
+  display: flex; align-items: center; gap: 7px;
+  padding: 6px 13px; border-radius: 3px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  font-size: 9px; letter-spacing: 2px;
+  color: rgba(255,255,255,0.75); text-transform: uppercase;
+}
+.sdot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(255,255,255,0.3); flex-shrink: 0;
+  transition: all 0.4s;
+}
+.sdot.green  { background: #4ade80; box-shadow: 0 0 6px #4ade8099; }
+.sdot.yellow { background: #fbbf24; animation: blink 1.1s infinite; }
+.sdot.red    { background: #f87171; }
+@keyframes blink { 50% { opacity: 0.25; } }
+
+/* Hint */
+#hint {
+  position: absolute; bottom: 150px; left: 50%;
+  transform: translateX(-50%); white-space: nowrap;
+  transition: opacity 0.5s;
+}
+#hintBox {
+  background: rgba(26,58,107,0.88);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.2);
+  padding: 10px 22px; border-radius: 3px;
+  font-size: 10px; letter-spacing: 3px;
+  color: rgba(255,255,255,0.9); text-transform: uppercase;
+}
+
+/* Product panel */
+#prodPanel {
+  position: absolute; right: 14px; top: 78px;
+  display: flex; flex-direction: column; gap: 8px;
+  opacity: 0; transition: opacity 0.6s; pointer-events: none;
+}
+#prodPanel.show { opacity: 1; pointer-events: all; }
+.prod-card {
+  background: rgba(250,248,245,0.95);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--gris-clair);
+  border-left: 3px solid var(--bleu);
+  padding: 9px 13px; width: 148px; border-radius: 2px;
+}
+.prod-name { font-family: 'Libre Baskerville', serif; font-size: 13px; color: var(--bleu); margin-bottom: 2px; }
+.prod-ref  { font-size: 9px; letter-spacing: 2px; color: var(--gris); text-transform: uppercase; }
+
+/* Controls */
+#controls {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: rgba(26,58,107,0.93);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(255,255,255,0.12);
+  padding: 14px 18px 36px;
+  display: flex; flex-direction: column; gap: 12px;
+  pointer-events: all;
+}
+.chips-row {
+  display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.chip {
+  padding: 9px 16px; white-space: nowrap;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.07);
+  color: rgba(255,255,255,0.6);
+  border-radius: 3px; font-size: 10px; letter-spacing: 2px;
+  text-transform: uppercase; font-family: 'Barlow', sans-serif;
+  cursor: pointer; transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.chip.active { background: var(--blanc); color: var(--bleu); border-color: var(--blanc); font-weight: 600; }
+
+.btns-row { display: flex; align-items: center; gap: 10px; }
+.btn-place {
+  flex: 1; padding: 14px 18px;
+  background: var(--blanc); color: var(--bleu);
+  border: none; border-radius: 3px;
+  font-family: 'Barlow', sans-serif;
+  font-size: 11px; font-weight: 600; letter-spacing: 2.5px;
+  text-transform: uppercase; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-place:active { opacity: 0.75; }
+.btn-clear {
+  padding: 13px 16px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.75); border-radius: 3px;
+  font-family: 'Barlow', sans-serif;
+  font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+.btn-clear:active { background: rgba(255,255,255,0.2); }
+
+/* ══ MARQUEUR ══ */
+#markerSheet {
+  position: fixed; inset: 0; z-index: 400;
+  background: rgba(10,20,50,0.97);
+  display: none;
+  flex-direction: column; align-items: center; justify-content: center;
+  gap: 24px; padding: 40px;
+}
+#markerSheet.show { display: flex; }
+#markerSheet h2 {
+  font-family: 'Libre Baskerville', serif;
+  color: white; font-size: 22px; text-align: center;
+}
+#markerSheet p {
+  color: rgba(255,255,255,0.55); font-size: 13px;
+  text-align: center; max-width: 280px; line-height: 1.8;
+}
+#hirosImg {
+  width: 200px; height: 200px;
+  background: white; border: 8px solid white;
+  border-radius: 8px; padding: 10px;
+  image-rendering: pixelated;
+}
+.btn-close-marker {
+  padding: 14px 40px;
+  background: var(--bleu); color: white;
+  border: none; border-radius: 3px;
+  font-family: 'Barlow', sans-serif;
+  font-size: 11px; font-weight: 500; letter-spacing: 3px;
+  text-transform: uppercase; cursor: pointer; pointer-events: all;
+}
+</style>
+</head>
+<body>
+
+<!-- ══ SCÈNE A-FRAME AR ══ -->
+<a-scene
+  id="arScene"
+  embedded
+  arjs="sourceType: webcam; detectionMode: mono_and_matrix; matrixCodeType: 3x3; debugUIEnabled: false; trackingMethod: best;"
+  vr-mode-ui="enabled: false"
+  renderer="logarithmicDepthBuffer: true; precision: medium;"
+  style="display:none"
+>
+  <!-- Caméra AR -->
+  <a-camera-static></a-camera-static>
+
+  <!-- ══ MARQUEUR HIRO (standard, imprimable) ══ -->
+  <a-marker id="mainMarker" preset="hiro" smooth="true" smoothCount="5" smoothTolerance="0.01" smoothThreshold="2">
+
+    <!-- Ombre portée sur la table -->
+    <a-plane
+      position="0 0.001 0"
+      rotation="-90 0 0"
+      width="1.1" height="0.7"
+      color="#000000" opacity="0.08"
+      material="transparent: true">
+    </a-plane>
+
+    <!-- ══ PLACE 1 GAUCHE ══ -->
+    <!-- Placemat -->
+    <a-cylinder id="mat1"
+      position="-0.22 0.001 0"
+      radius="0.14" height="0.003"
+      color="#faf8f5" opacity="0.92">
+    </a-cylinder>
+    <!-- Liseré bleu -->
+    <a-torus id="rim1"
+      position="-0.22 0.002 0"
+      radius="0.132" radius-tubular="0.008"
+      rotation="90 0 0"
+      color="#1a3a6b" opacity="0.75">
+    </a-torus>
+    <!-- Verre Picardie gauche -->
+    <a-entity id="glass1" position="-0.22 0 0">
+      <!-- Corps du verre (cône tronqué) -->
+      <a-cylinder
+        position="0 0.06 0"
+        radius-bottom="0.022" radius-top="0.036"
+        height="0.108"
+        color="#ddeeff" opacity="0.35"
+        material="transparent: true; side: double; roughness: 0.05; metalness: 0;">
+      </a-cylinder>
+      <!-- Fond du verre -->
+      <a-cylinder
+        position="0 0.003 0"
+        radius="0.022" height="0.006"
+        color="#ddeeff" opacity="0.55"
+        material="transparent: true; roughness: 0.05;">
+      </a-cylinder>
+      <!-- Rebord supérieur -->
+      <a-torus
+        position="0 0.111 0"
+        radius="0.036" radius-tubular="0.002"
+        rotation="90 0 0"
+        color="#eef5ff" opacity="0.7"
+        material="transparent: true;">
+      </a-torus>
+    </a-entity>
+    <!-- Couverts gauche -->
+    <a-box position="-0.37 0.001 0" width="0.005" height="0.002" depth="0.11" color="#ccc4b8" metalness="0.9" roughness="0.1"></a-box>
+    <a-box position="-0.35 0.001 0" width="0.005" height="0.002" depth="0.11" color="#ccc4b8" metalness="0.9" roughness="0.1"></a-box>
+
+    <!-- ══ PLACE 2 DROITE ══ -->
+    <a-cylinder id="mat2"
+      position="0.22 0.001 0"
+      radius="0.14" height="0.003"
+      color="#faf8f5" opacity="0.92">
+    </a-cylinder>
+    <a-torus id="rim2"
+      position="0.22 0.002 0"
+      radius="0.132" radius-tubular="0.008"
+      rotation="90 0 0"
+      color="#1a3a6b" opacity="0.75">
+    </a-torus>
+    <a-entity id="glass2" position="0.22 0 0">
+      <a-cylinder
+        position="0 0.06 0"
+        radius-bottom="0.022" radius-top="0.036"
+        height="0.108"
+        color="#ddeeff" opacity="0.35"
+        material="transparent: true; side: double; roughness: 0.05; metalness: 0;">
+      </a-cylinder>
+      <a-cylinder
+        position="0 0.003 0"
+        radius="0.022" height="0.006"
+        color="#ddeeff" opacity="0.55"
+        material="transparent: true;">
+      </a-cylinder>
+      <a-torus
+        position="0 0.111 0"
+        radius="0.036" radius-tubular="0.002"
+        rotation="90 0 0"
+        color="#eef5ff" opacity="0.7"
+        material="transparent: true;">
+      </a-torus>
+    </a-entity>
+    <!-- Couverts droite -->
+    <a-box position="0.35 0.001 0" width="0.005" height="0.002" depth="0.11" color="#ccc4b8" metalness="0.9" roughness="0.1"></a-box>
+    <a-box position="0.37 0.001 0" width="0.005" height="0.002" depth="0.11" color="#ccc4b8" metalness="0.9" roughness="0.1"></a-box>
+
+    <!-- ══ CARAFE CENTRE ══ -->
+    <a-entity id="carafe" position="0 0 -0.08">
+      <!-- Corps -->
+      <a-cylinder
+        position="0 0.09 0"
+        radius-bottom="0.028" radius-top="0.020"
+        height="0.13"
+        color="#ddeeff" opacity="0.30"
+        material="transparent: true; side: double; roughness: 0.02;">
+      </a-cylinder>
+      <!-- Panse -->
+      <a-sphere
+        position="0 0.065 0"
+        radius="0.052"
+        color="#ddeeff" opacity="0.25"
+        material="transparent: true; side: double; roughness: 0.02; wireframe: false;">
+      </a-sphere>
+      <!-- Col -->
+      <a-cylinder
+        position="0 0.175 0"
+        radius="0.018" height="0.05"
+        color="#ddeeff" opacity="0.30"
+        material="transparent: true; side: double;">
+      </a-cylinder>
+      <!-- Bouchon -->
+      <a-sphere
+        position="0 0.215 0"
+        radius="0.018"
+        color="#eef5ff" opacity="0.55"
+        material="transparent: true;">
+      </a-sphere>
+      <!-- Base -->
+      <a-cylinder
+        position="0 0.004 0"
+        radius="0.030" height="0.008"
+        color="#ddeeff" opacity="0.50"
+        material="transparent: true;">
+      </a-cylinder>
+    </a-entity>
+
+    <!-- ══ VERRES À VIN ARRIÈRE ══ -->
+    <a-entity position="-0.22 0 -0.18" scale="0.72 0.72 0.72">
+      <a-cylinder
+        position="0 0.06 0"
+        radius-bottom="0.022" radius-top="0.036"
+        height="0.108"
+        color="#ddeeff" opacity="0.30"
+        material="transparent: true; side: double; roughness: 0.05;">
+      </a-cylinder>
+      <a-cylinder position="0 0.003 0" radius="0.022" height="0.006" color="#ddeeff" opacity="0.5" material="transparent: true;"></a-cylinder>
+    </a-entity>
+    <a-entity position="0.22 0 -0.18" scale="0.72 0.72 0.72">
+      <a-cylinder
+        position="0 0.06 0"
+        radius-bottom="0.022" radius-top="0.036"
+        height="0.108"
+        color="#ddeeff" opacity="0.30"
+        material="transparent: true; side: double; roughness: 0.05;">
+      </a-cylinder>
+      <a-cylinder position="0 0.003 0" radius="0.022" height="0.006" color="#ddeeff" opacity="0.5" material="transparent: true;"></a-cylinder>
+    </a-entity>
+
+  </a-marker>
+
+  <!-- Caméra -->
+  <a-entity camera></a-entity>
+</a-scene>
+
+<!-- ══ SPLASH ══ -->
+<div id="splash">
+  <div class="splash-hero">
+    <div class="splash-logo-wrap">
+      <svg viewBox="0 0 200 56" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="100" cy="28" rx="97" ry="25" fill="white" opacity="0.13"/>
+        <ellipse cx="100" cy="28" rx="97" ry="25" fill="none" stroke="white" stroke-width="1.5" opacity="0.45"/>
+        <text x="100" y="37" font-family="'Libre Baskerville',Georgia,serif"
+          font-size="26" font-weight="700" fill="white"
+          text-anchor="middle" letter-spacing="5">DURALEX</text>
+        <text x="188" y="16" font-family="Arial,sans-serif" font-size="11" fill="white" opacity="0.9">®</text>
+      </svg>
+      <div class="splash-made">Fabriqué en France depuis 1945</div>
+    </div>
+    <div class="splash-line"></div>
+    <h1 class="splash-title">Table en Vie<br><em>Réalité Augmentée</em></h1>
+    <p class="splash-desc">Imprimez le marqueur Duralex, posez-le sur votre table et filmez-le. La composition apparaît dessus en 3D.</p>
+
+    <div class="marker-box">
+      <p>📄 L'application utilise un <strong>marqueur imprimable</strong> posé sur la table. Les objets s'ancrent dessus et suivent le mouvement de la caméra.</p>
+    </div>
+
+    <div class="compat-row">
+      <div class="compat-badge">🍎 iOS Safari</div>
+      <div class="compat-badge">🤖 Android Chrome</div>
+    </div>
+  </div>
+
+  <div class="splash-bottom">
+    <button class="btn-bleu" onclick="showMarker()">
+      📥 Voir le marqueur à imprimer
+    </button>
+    <button class="btn-bleu" onclick="launchAR()" style="background:#0d2247;">
+      📷 Lancer l'AR (marqueur prêt)
+    </button>
+    <button class="btn-outline-bleu" onclick="launchDemo()">
+      Aperçu 3D sans marqueur
+    </button>
+  </div>
+</div>
+
+<!-- ══ FEUILLE MARQUEUR ══ -->
+<div id="markerSheet">
+  <h2>Marqueur Duralex®</h2>
+  <p>Imprimez ce marqueur et posez-le sur votre table. L'application détectera sa position et ancrera la composition dessus.</p>
+
+  <!-- Marqueur Hiro encodé en base64 SVG -->
+  <svg id="hirosImg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <!-- Bordure noire -->
+    <rect width="100" height="100" fill="black"/>
+    <!-- Zone blanche intérieure -->
+    <rect x="15" y="15" width="70" height="70" fill="white"/>
+    <!-- Pattern Hiro (approximation visuelle) -->
+    <rect x="25" y="25" width="50" height="50" fill="black"/>
+    <rect x="30" y="30" width="18" height="18" fill="white"/>
+    <rect x="52" y="30" width="18" height="18" fill="white"/>
+    <rect x="30" y="52" width="18" height="18" fill="white"/>
+    <rect x="52" y="52" width="8" height="8"  fill="white"/>
+    <rect x="62" y="58" width="8" height="8"  fill="white"/>
+    <!-- Label Duralex sous le marqueur -->
+  </svg>
+
+  <p style="font-size:11px; color:rgba(255,255,255,0.4);">
+    Taille recommandée : 8×8 cm minimum.<br>
+    Posez-le à plat sur la table.
+  </p>
+
+  <button class="btn-close-marker" onclick="hideMarker()">
+    ✓ J'ai imprimé le marqueur
+  </button>
+</div>
+
+<!-- ══ UI ══ -->
+<div id="ui">
+  <div id="header">
+    <div id="logoBtn" onclick="goHome()">
+      <svg viewBox="0 0 200 56" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="100" cy="28" rx="97" ry="25" fill="white" opacity="0.16"/>
+        <ellipse cx="100" cy="28" rx="97" ry="25" fill="none" stroke="white" stroke-width="1" opacity="0.4"/>
+        <text x="100" y="37" font-family="'Libre Baskerville',Georgia,serif"
+          font-size="26" font-weight="700" fill="white"
+          text-anchor="middle" letter-spacing="5">DURALEX</text>
+        <text x="188" y="16" font-family="Arial,sans-serif" font-size="11" fill="white">®</text>
+      </svg>
+    </div>
+    <div id="statusPill">
+      <div class="sdot yellow" id="sdot"></div>
+      <span id="sTxt">Cherche le marqueur…</span>
+    </div>
+  </div>
+
+  <div id="hint"><div id="hintBox">Pointez la caméra vers le marqueur</div></div>
+
+  <div id="prodPanel">
+    <div class="prod-card"><div class="prod-name">Picardie</div><div class="prod-ref">Verre eau · 25 cl</div></div>
+    <div class="prod-card"><div class="prod-name">Gigogne</div><div class="prod-ref">Carafe · 1 L</div></div>
+    <div class="prod-card"><div class="prod-name">Lys</div><div class="prod-ref">Verre vin · 20 cl</div></div>
+  </div>
+
+  <div id="controls">
+    <div class="chips-row">
+      <div class="chip active"  onclick="setColor('#ddeeff', '0.35', this)">Transparent</div>
+      <div class="chip" onclick="setColor('#1a3a6b', '0.82', this)">Marine</div>
+      <div class="chip" onclick="setColor('#d4820a', '0.82', this)">Ambré</div>
+      <div class="chip" onclick="setColor('#5c1a54', '0.82', this)">Prune</div>
+      <div class="chip" onclick="setColor('#eef4f9', '0.20', this)">Givré</div>
+    </div>
+    <div class="btns-row">
+      <button class="btn-place" onclick="showMarker()">
+        📄 Afficher le marqueur
+      </button>
+      <button class="btn-clear" onclick="goHome()">⌂</button>
+    </div>
+  </div>
+</div>
+
+<!-- FALLBACK CANVAS -->
+<canvas id="fallbackCanvas" style="display:none; position:fixed; inset:0; z-index:2;"></canvas>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+
+// ═══════════════════════════════════════════════
+//  DURALEX® — Table en Vie
+//  AR.js + A-Frame : détection de marqueur réelle
+//  Les objets 3D s'ancrent sur le marqueur posé
+//  sur la table et suivent la caméra
+// ═══════════════════════════════════════════════
+
+function setStatus(t, c) {
+  document.getElementById('sTxt').textContent = t;
+  document.getElementById('sdot').className = 'sdot ' + c;
+}
+function setHint(t) { document.getElementById('hintBox').textContent = t; }
+
+// ── Lancer AR avec marqueur
+function launchAR() {
+  document.getElementById('splash').classList.add('hidden');
+  document.getElementById('ui').classList.add('active');
+
+  const scene = document.getElementById('arScene');
+  scene.style.display = 'block';
+
+  setStatus('Cherche le marqueur…', 'yellow');
+  setHint('Pointez la caméra vers le marqueur imprimé');
+
+  // Écouter détection marqueur
+  const marker = document.getElementById('mainMarker');
+
+  marker.addEventListener('markerFound', () => {
+    setStatus('Marqueur détecté ✓', 'green');
+    setHint('Composition posée sur la table');
+    document.getElementById('prodPanel').classList.add('show');
+    document.getElementById('hint').style.opacity = '0';
+    setTimeout(() => document.getElementById('hint').style.opacity = '1', 4000);
+  });
+
+  marker.addEventListener('markerLost', () => {
+    setStatus('Cherche le marqueur…', 'yellow');
+    setHint('Repositionnez le marqueur dans l\'objectif');
+    document.getElementById('prodPanel').classList.remove('show');
+    document.getElementById('hint').style.opacity = '1';
+  });
+}
+
+// ── Changer la couleur des verres en temps réel
+function setColor(hexColor, opacity, el) {
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+
+  // Mettre à jour tous les cylindres des verres
+  ['glass1', 'glass2'].forEach(id => {
+    const glass = document.getElementById(id);
+    if (!glass) return;
+    glass.querySelectorAll('a-cylinder, a-torus').forEach(el => {
+      el.setAttribute('color', hexColor);
+      el.setAttribute('opacity', opacity);
+    });
+  });
+
+  // Carafe
+  const carafe = document.getElementById('carafe');
+  if (carafe) {
+    carafe.querySelectorAll('a-cylinder, a-sphere').forEach(el => {
+      el.setAttribute('color', hexColor);
+      el.setAttribute('opacity', String(parseFloat(opacity) * 0.85));
+    });
+  }
+
+  // Verres arrière
+  document.querySelectorAll('[position*="-0.18"], [position*="0.18"]').forEach(el => {
+    el.querySelectorAll('a-cylinder').forEach(c => {
+      c.setAttribute('color', hexColor);
+      c.setAttribute('opacity', String(parseFloat(opacity) * 0.85));
+    });
+  });
+}
+
+// ── Afficher / cacher le marqueur
+function showMarker() {
+  document.getElementById('markerSheet').classList.add('show');
+}
+function hideMarker() {
+  document.getElementById('markerSheet').classList.remove('show');
+}
+
+// ── Retour accueil
+function goHome() {
+  const scene = document.getElementById('arScene');
+  scene.style.display = 'none';
+
+  // Stop fallback
+  document.getElementById('fallbackCanvas').style.display = 'none';
+  document.getElementById('ui').classList.remove('active');
+  document.getElementById('prodPanel').classList.remove('show');
+  document.getElementById('hint').style.opacity = '1';
+  setHint('Pointez la caméra vers le marqueur');
+  setStatus('Cherche le marqueur…', 'yellow');
+  document.getElementById('splash').classList.remove('hidden');
+}
+
+// ── DEMO 3D sans marqueur (Three.js)
+let demoRenderer, demoScene, demoCamera, demoClock;
+
+function launchDemo() {
+  document.getElementById('splash').classList.add('hidden');
+  document.getElementById('ui').classList.add('active');
+  setStatus('Mode aperçu', 'green');
+  setHint('Glissez pour tourner autour de la table');
+
+  const PALETTES = {
+    transparent: { glass: 0xddeeff, op: 0.30 },
+  };
+
+  const canvas = document.getElementById('fallbackCanvas');
+  canvas.style.display = 'block';
+
+  demoScene  = new THREE.Scene();
+  demoClock  = new THREE.Clock();
+  demoCamera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.01, 50);
+  demoCamera.position.set(0, 0.35, 0.9);
+  demoCamera.lookAt(0, -0.35, 0);
+
+  demoRenderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+  demoRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  demoRenderer.setSize(window.innerWidth, window.innerHeight);
+  demoRenderer.setClearColor(0xeef2f8, 1);
+  demoRenderer.shadowMap.enabled = true;
+  demoScene.fog = new THREE.FogExp2(0xeef2f8, 0.4);
+
+  demoScene.add(new THREE.AmbientLight(0xffffff, 1.0));
+  const dir = new THREE.DirectionalLight(0xfff5e8, 1.0);
+  dir.position.set(1, 3, 2); dir.castShadow = true; demoScene.add(dir);
+  demoScene.add(new THREE.HemisphereLight(0xddeeff, 0x7799cc, 0.4));
+
+  // Table
+  const table = new THREE.Mesh(
+    new THREE.BoxGeometry(2.0, 0.04, 1.4),
+    new THREE.MeshStandardMaterial({ color: 0xd4cdc4, roughness: 0.88 })
+  );
+  table.position.y = -0.42; table.receiveShadow = true; demoScene.add(table);
+
+  [[-0.85,-0.56],[-0.85,0.56],[0.85,-0.56],[0.85,0.56]].forEach(([x,z]) => {
+    const leg = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.024, 0.024, 0.62, 8),
+      new THREE.MeshStandardMaterial({ color: 0xbbb0a4, roughness: 0.9 })
+    );
+    leg.position.set(x, -0.73, z); demoScene.add(leg);
+  });
+
+  // Composition Three.js
+  const comp = buildThreeComposition(new THREE.Vector3(0, -0.4, 0));
+  demoScene.add(comp);
+  document.getElementById('prodPanel').classList.add('show');
+
+  setupOrbit(canvas);
+
+  demoRenderer.setAnimationLoop(() => {
+    demoRenderer.render(demoScene, demoCamera);
+  });
+
+  window.addEventListener('resize', () => {
+    demoCamera.aspect = window.innerWidth / window.innerHeight;
+    demoCamera.updateProjectionMatrix();
+    demoRenderer.setSize(window.innerWidth, window.innerHeight);
+  });
+}
+
+function buildThreeComposition(pos) {
+  const p = { glass: 0xddeeff, op: 0.32, rim: 0xeef5ff };
+  const grp = new THREE.Group();
+  grp.position.copy(pos);
+
+  const glassMat = () => new THREE.MeshPhysicalMaterial({
+    color: p.glass, transparent: true, opacity: p.op,
+    roughness: 0.04, transmission: 0.85, thickness: 0.4,
+    reflectivity: 0.95, side: THREE.DoubleSide,
+  });
+  const rimMat = () => new THREE.MeshPhysicalMaterial({
+    color: p.rim, transparent: true, opacity: 0.55, roughness: 0.05
+  });
+  const baseBlue = new THREE.MeshStandardMaterial({ color: 0x1a3a6b, roughness: 0.85 });
+
+  function addPicardie(px, pz, scale=1) {
+    const g = new THREE.Group();
+    g.position.set(px, 0, pz);
+    // Placemat
+    const disc = new THREE.Mesh(new THREE.CircleGeometry(0.14, 64),
+      new THREE.MeshStandardMaterial({ color: 0xfaf8f5, roughness: 0.92, side: THREE.DoubleSide }));
+    disc.rotation.x = -Math.PI/2; disc.position.y = 0.001; g.add(disc);
+    const ring = new THREE.Mesh(new THREE.RingGeometry(0.127, 0.14, 64),
+      new THREE.MeshBasicMaterial({ color: 0x1a3a6b, side: THREE.DoubleSide, transparent: true, opacity: 0.8 }));
+    ring.rotation.x = -Math.PI/2; ring.position.y = 0.002; g.add(ring);
+    // Verre
+    const pts = [
+      new THREE.Vector2(0.022,0), new THREE.Vector2(0.024,0.01),
+      new THREE.Vector2(0.027,0.03), new THREE.Vector2(0.030,0.058),
+      new THREE.Vector2(0.034,0.09), new THREE.Vector2(0.036,0.108),
+    ];
+    const body = new THREE.Mesh(new THREE.LatheGeometry(pts, 30), glassMat());
+    body.scale.setScalar(scale); g.add(body);
+    const rim = new THREE.Mesh(new THREE.TorusGeometry(0.036*scale, 0.0018, 8, 30), rimMat());
+    rim.rotation.x = Math.PI/2; rim.position.y = 0.108*scale; g.add(rim);
+    g.add(new THREE.Mesh(new THREE.CylinderGeometry(0.023*scale, 0.02*scale, 0.006, 28), glassMat()));
+    grp.add(g);
+  }
+
+  addPicardie(-0.22, 0.02, 1);
+  addPicardie(0.22, 0.02, 1);
+  addPicardie(-0.22, -0.19, 0.72);
+  addPicardie(0.22, -0.19, 0.72);
+
+  // Carafe
+  const carafePts = [
+    new THREE.Vector2(0.024,0), new THREE.Vector2(0.026,0.01),
+    new THREE.Vector2(0.050,0.05), new THREE.Vector2(0.056,0.10),
+    new THREE.Vector2(0.048,0.15), new THREE.Vector2(0.028,0.19),
+    new THREE.Vector2(0.019,0.215), new THREE.Vector2(0.017,0.235),
+    new THREE.Vector2(0.021,0.252),
+  ];
+  const carafe = new THREE.Group();
+  carafe.add(new THREE.Mesh(new THREE.LatheGeometry(carafePts, 32), glassMat()));
+  const stopper = new THREE.Mesh(new THREE.SphereGeometry(0.017, 16, 16), rimMat());
+  stopper.position.y = 0.275; carafe.add(stopper);
+  carafe.position.set(0, 0, -0.06); carafe.scale.setScalar(0.9); grp.add(carafe);
+
+  // Couverts
+  const cMat = new THREE.MeshStandardMaterial({ color: 0xccc4b8, metalness: 0.88, roughness: 0.12 });
+  [{x:-0.37,l:0.11},{x:-0.35,l:0.11},{x:0.35,l:0.11},{x:0.37,l:0.11}].forEach(({x,l}) => {
+    const m = new THREE.Mesh(new THREE.BoxGeometry(0.005, 0.001, l), cMat);
+    m.position.set(x, 0.001, 0); grp.add(m);
+  });
+
+  return grp;
+}
+
+function setupOrbit(el) {
+  let down=false, lx=0, ly=0, ay=0.1, ax=0.38;
+  const s = (x,y) => { down=true; lx=x; ly=y; };
+  const m = (x,y) => {
+    if(!down) return;
+    ay += (x-lx)*0.007;
+    ax = Math.max(0.05, Math.min(0.82, ax+(y-ly)*0.005));
+    lx=x; ly=y;
+    const r=0.95;
+    demoCamera.position.set(Math.sin(ay)*Math.cos(ax)*r, Math.sin(ax)*r-0.05, Math.cos(ay)*Math.cos(ax)*r);
+    demoCamera.lookAt(0,-0.35,0);
+  };
+  el.addEventListener('mousedown',  e => s(e.clientX,e.clientY));
+  el.addEventListener('touchstart', e => s(e.touches[0].clientX,e.touches[0].clientY), {passive:true});
+  el.addEventListener('mouseup',    () => down=false);
+  el.addEventListener('touchend',   () => down=false, {passive:true});
+  el.addEventListener('mousemove',  e => m(e.clientX,e.clientY));
+  el.addEventListener('touchmove',  e => { m(e.touches[0].clientX,e.touches[0].clientY); e.preventDefault(); }, {passive:false});
+}
+</script>
+</body>
+</html>
