@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Duralex® — Table en Vie AR</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Barlow:wght@300;400;500;600&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100vw;height:100vh;overflow:hidden;background:#000;
+  font-family:'Barlow',sans-serif;touch-action:none;-webkit-text-size-adjust:100%}
+
+#video{position:fixed;inset:0;z-index:1;width:100%;height:100%;object-fit:cover}
+#threeCanvas{position:fixed;inset:0;z-index:3;width:100%;height:100%;pointer-events:none;display:none}
+#svg{position:fixed;inset:0;z-index:4;pointer-events:none}
+#tap{position:fixed;inset:0;z-index:8;cursor:crosshair}
+#tap.off{display:none}
+
+.dot{position:fixed;z-index:9;width:38px;height:38px;border-radius:50%;
+  background:#1a3a6b;border:3px solid #fff;transform:translate(-50%,-50%);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;color:#fff;
+  box-shadow:0 2px 16px rgba(0,0,0,0.5);pointer-events:none;
+  animation:popIn .3s cubic-bezier(.16,1,.3,1)}
+@keyframes popIn{from{transform:translate(-50%,-50%) scale(0);opacity:0}to{transform:translate(-50%,-50%) scale(1);opacity:1}}
+
+#splash{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;background:#1a3a6b}
+#splash.off{display:none}
+.hero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:20px;padding:48px 32px 26px;
+  background:linear-gradient(160deg,#1a3a6b 0%,#0d2247 100%);position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;width:380px;height:380px;border-radius:50%;
+  border:1px solid rgba(255,255,255,0.05);top:-120px;right:-110px}
+.htitle{font-family:'Libre Baskerville',serif;font-size:26px;color:#fff;
+  text-align:center;line-height:1.3;position:relative;z-index:1}
+.htitle em{font-style:italic;color:rgba(255,255,255,0.55)}
+.hdesc{font-size:13px;line-height:1.85;color:rgba(255,255,255,0.48);
+  text-align:center;max-width:280px;position:relative;z-index:1}
+.steps{display:flex;flex-direction:column;gap:9px;max-width:272px;position:relative;z-index:1}
+.step{display:flex;align-items:center;gap:11px;background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:9px 13px}
+.snum{width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,0.15);
+  display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff;flex-shrink:0}
+.stxt{font-size:11px;color:rgba(255,255,255,0.7);line-height:1.4}
+.bot{background:#faf8f5;padding:20px 24px 44px;display:flex;flex-direction:column;gap:10px}
+.btn-b{width:100%;padding:15px;border:none;border-radius:3px;cursor:pointer;
+  font-family:'Barlow',sans-serif;font-size:11px;font-weight:500;letter-spacing:3px;
+  text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:9px;transition:background .2s}
+.btn-b.solid{background:#1a3a6b;color:#fff}.btn-b.solid:active{background:#1e4d9b}
+.btn-b.outline{background:transparent;color:#1a3a6b;border:1.5px solid #1a3a6b}
+.btn-b.outline:active{background:#f0f4fa}
+
+#hdr{position:fixed;top:0;left:0;right:0;z-index:20;height:60px;
+  display:none;align-items:center;justify-content:space-between;padding:0 18px;
+  background:rgba(26,58,107,.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(255,255,255,.12)}
+#hdr.on{display:flex}
+#logo{cursor:pointer;-webkit-tap-highlight-color:transparent}
+#logo svg{height:26px}#logo:active{opacity:.7}
+#pill{display:flex;align-items:center;gap:7px;padding:6px 12px;border-radius:3px;
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+  font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.75);text-transform:uppercase}
+.sd{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.3);flex-shrink:0;transition:all .4s}
+.sd.g{background:#4ade80;box-shadow:0 0 6px #4ade8099}
+.sd.y{background:#fbbf24;animation:bl 1.1s infinite}
+.sd.b{background:#60a5fa;box-shadow:0 0 6px #60a5fa88}
+@keyframes bl{50%{opacity:.2}}
+
+#instr{position:fixed;top:50%;left:50%;z-index:20;transform:translate(-50%,-50%);
+  pointer-events:none;text-align:center;transition:opacity .5s}
+#instr.off{opacity:0}
+.ibox{background:rgba(26,58,107,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:18px 24px;
+  display:flex;flex-direction:column;align-items:center;gap:8px}
+.iico{font-size:28px}.itxt{font-size:13px;color:rgba(255,255,255,.9);line-height:1.7;text-align:center;max-width:220px}
+.icnt{font-size:10px;color:rgba(255,255,255,.4);letter-spacing:2px;text-transform:uppercase}
+
+#prods{position:fixed;right:12px;top:70px;z-index:20;display:flex;flex-direction:column;gap:7px;
+  opacity:0;transition:opacity .5s;pointer-events:none}
+#prods.on{opacity:1;pointer-events:all}
+.pc{background:rgba(250,248,245,.95);backdrop-filter:blur(10px);
+  border:1px solid #dde3ed;border-left:3px solid #1a3a6b;padding:8px 12px;width:142px;border-radius:2px}
+.pn{font-family:'Libre Baskerville',serif;font-size:13px;color:#1a3a6b;margin-bottom:2px}
+.pr{font-size:9px;letter-spacing:2px;color:#5a6478;text-transform:uppercase}
+
+#ctrl{position:fixed;bottom:0;left:0;right:0;z-index:20;
+  display:none;flex-direction:column;gap:10px;
+  background:rgba(26,58,107,.93);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border-top:1px solid rgba(255,255,255,.12);padding:12px 16px 34px}
+#ctrl.on{display:flex}
+.chips{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.chip{padding:8px 15px;white-space:nowrap;border:1px solid rgba(255,255,255,.2);
+  background:rgba(255,255,255,.07);color:rgba(255,255,255,.6);border-radius:3px;
+  font-size:10px;letter-spacing:2px;text-transform:uppercase;font-family:'Barlow',sans-serif;
+  cursor:pointer;transition:all .2s;-webkit-tap-highlight-color:transparent}
+.chip.on{background:#fff;color:#1a3a6b;border-color:#fff;font-weight:600}
+.brow{display:flex;gap:9px}
+.ba{flex:1;padding:13px;background:#fff;color:#1a3a6b;border:none;border-radius:3px;
+  font-family:'Barlow',sans-serif;font-size:10px;font-weight:600;letter-spacing:2px;
+  text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;
+  -webkit-tap-highlight-color:transparent}
+.ba:active{opacity:.75}
+.ba.ghost{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+  color:rgba(255,255,255,.8);flex:0 0 auto;padding:13px 15px}
+</style>
+</head>
+<body>
+
+<video id="video" autoplay playsinline muted></video>
+<canvas id="threeCanvas"></canvas>
+
+<svg id="svg" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="glow"><feGaussianBlur stdDeviation="2" result="b"/>
+    <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+  <polygon id="poly" fill="rgba(26,58,107,0.10)" stroke="#60a5fa"
+    stroke-width="2" stroke-dasharray="8 5" filter="url(#glow)" points="" opacity="0"/>
+  <line id="l01" stroke="rgba(96,165,250,0.5)" stroke-width="1.5" stroke-dasharray="6 5" opacity="0"/>
+  <line id="l12" stroke="rgba(96,165,250,0.5)" stroke-width="1.5" stroke-dasharray="6 5" opacity="0"/>
+  <line id="l23" stroke="rgba(96,165,250,0.5)" stroke-width="1.5" stroke-dasharray="6 5" opacity="0"/>
+  <line id="l30" stroke="rgba(96,165,250,0.5)" stroke-width="1.5" stroke-dasharray="6 5" opacity="0"/>
+</svg>
+
+<div id="tap"></div>
+
+<div id="splash">
+  <div class="hero">
+    <svg style="width:175px;position:relative;z-index:1" viewBox="0 0 200 56">
+      <ellipse cx="100" cy="28" rx="97" ry="25" fill="white" opacity="0.13"/>
+      <ellipse cx="100" cy="28" rx="97" ry="25" fill="none" stroke="white" stroke-width="1.5" opacity="0.4"/>
+      <text x="100" y="37" font-family="'Libre Baskerville',Georgia,serif" font-size="26" font-weight="700"
+        fill="white" text-anchor="middle" letter-spacing="5">DURALEX</text>
+      <text x="188" y="16" font-family="Arial,sans-serif" font-size="11" fill="white">®</text>
+    </svg>
+    <h1 class="htitle">Table en Vie<br><em>Réalité Augmentée</em></h1>
+    <p class="hdesc">Délimitez votre table en 4 points. Les objets 3D Duralex® se posent dessus avec la vraie perspective.</p>
+    <div class="steps">
+      <div class="step"><div class="snum">1</div><div class="stxt">Filmez votre table</div></div>
+      <div class="step"><div class="snum">2</div><div class="stxt">Touchez les <strong style="color:#fff">4 coins</strong> : ↖ ↗ ↘ ↙</div></div>
+      <div class="step"><div class="snum">3</div><div class="stxt">La vaisselle 3D apparaît posée sur la table</div></div>
+    </div>
+  </div>
+  <div class="bot">
+    <button class="btn-b solid" onclick="startAR()">📷 Lancer l'AR</button>
+    <button class="btn-b outline" onclick="startDemo()">Aperçu 3D sans caméra</button>
+  </div>
+</div>
+
+<div id="hdr">
+  <div id="logo" onclick="goHome()">
+    <svg viewBox="0 0 200 56">
+      <ellipse cx="100" cy="28" rx="97" ry="25" fill="white" opacity="0.16"/>
+      <ellipse cx="100" cy="28" rx="97" ry="25" fill="none" stroke="white" stroke-width="1" opacity="0.4"/>
+      <text x="100" y="37" font-family="'Libre Baskerville',Georgia,serif" font-size="26" font-weight="700"
+        fill="white" text-anchor="middle" letter-spacing="5">DURALEX</text>
+      <text x="188" y="16" font-family="Arial,sans-serif" font-size="11" fill="white">®</text>
+    </svg>
+  </div>
+  <div id="pill"><div class="sd y" id="sd"></div><span id="stxt">Définissez la table</span></div>
+</div>
+
+<div id="instr">
+  <div class="ibox">
+    <div class="iico" id="iico">👆</div>
+    <div class="itxt" id="itxt">Touchez le coin<br><strong style="color:#60a5fa">haut-gauche</strong> de la table</div>
+    <div class="icnt" id="icnt">0 / 4 points</div>
+  </div>
+</div>
+
+<div id="prods">
+  <div class="pc"><div class="pn">Picardie</div><div class="pr">Verre eau · 25 cl</div></div>
+  <div class="pc"><div class="pn">Gigogne</div><div class="pr">Carafe · 1 L</div></div>
+  <div class="pc"><div class="pn">Lys</div><div class="pr">Verre vin · 20 cl</div></div>
+</div>
+
+<div id="ctrl">
+  <div class="chips">
+    <div class="chip on"  onclick="setStyle(this,'transparent')">Transparent</div>
+    <div class="chip" onclick="setStyle(this,'marine')">Marine</div>
+    <div class="chip" onclick="setStyle(this,'amber')">Ambré</div>
+    <div class="chip" onclick="setStyle(this,'prune')">Prune</div>
+    <div class="chip" onclick="setStyle(this,'givre')">Givré</div>
+  </div>
+  <div class="brow">
+    <button class="ba" onclick="resetZone()">↺ Redéfinir la zone</button>
+    <button class="ba ghost" onclick="goHome()">⌂</button>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════════
+//  DURALEX® — AR 3D avec calibration caméra depuis 4 points
+//
+//  Le principe correct :
+//  1. L'utilisateur tape 4 coins de la table réelle (pixels)
+//  2. On définit un plan 3D (table) dans le monde Three.js
+//  3. On calcule la caméra Three.js dont le FOV, la position
+//     et l'orientation font correspondre les 4 coins 3D
+//     aux 4 pixels tapés → calibration PnP simplifiée
+//  4. Les objets 3D posés sur Y=0 apparaissent droits,
+//     avec la bonne perspective, les ombres, la profondeur
+// ═══════════════════════════════════════════════════════════
+
+const PAL = {
+  transparent:{ color:0xb8d8f0, opacity:0.38, transmission:0.88, roughness:0.03 },
+  marine:     { color:0x1a3a6b, opacity:0.90, transmission:0.05, roughness:0.08 },
+  amber:      { color:0xd4820a, opacity:0.90, transmission:0.05, roughness:0.06 },
+  prune:      { color:0x5c1a54, opacity:0.90, transmission:0.05, roughness:0.06 },
+  givre:      { color:0xe0f0ff, opacity:0.26, transmission:0.80, roughness:0.15 },
+};
+
+// Dimensions de la table 3D (unités arbitraires)
+const TW = 2.0;  // largeur
+const TD = 1.0;  // profondeur
+
+let style = 'transparent';
+let pts   = [];   // [TL, TR, BR, BL] pixels
+let dots  = [];
+let renderer, scene, clock, activeCamera;
+let isAR = false;
+
+// ─────────────────────────────────
+//  INIT THREE
+// ─────────────────────────────────
+function initThree() {
+  const canvas = document.getElementById('threeCanvas');
+  renderer = new THREE.WebGLRenderer({ canvas, alpha:true, antialias:true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setClearColor(0x000000, 0);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+  scene = new THREE.Scene();
+  clock = new THREE.Clock();
+
+  window.addEventListener('resize', () => {
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    if (pts.length === 4) buildScene();
+  });
+}
+
+// ─────────────────────────────────
+//  CALIBRATION CAMÉRA
+//
+//  Les 4 coins 3D de la table (plan Y=0) :
+//    P0=TL(-TW/2, 0, -TD/2)  P1=TR(+TW/2, 0, -TD/2)
+//    P2=BR(+TW/2, 0, +TD/2)  P3=BL(-TW/2, 0, +TD/2)
+//
+//  On cherche Camera telle que project(Pi) ≈ pts[i] (pixels)
+//
+//  Approche géométrique directe :
+//  - Le FOV est déduit de la convergence des lignes
+//  - La hauteur de la caméra vient de la taille perçue
+//  - Le pitch/roll viennent de l'orientation de la zone
+// ─────────────────────────────────
+function calibrateCamera() {
+  const W = window.innerWidth, H = window.innerHeight;
+  const [TL, TR, BR, BL] = pts;
+
+  // ── Métriques de la zone
+  const topW   = Math.hypot(TR.x-TL.x, TR.y-TL.y);
+  const botW   = Math.hypot(BR.x-BL.x, BR.y-BL.y);
+  const leftH  = Math.hypot(BL.x-TL.x, BL.y-TL.y);
+  const rightH = Math.hypot(BR.x-TR.x, BR.y-TR.y);
+  const avgW   = (topW + botW) / 2;
+  const avgH   = (leftH + rightH) / 2;
+
+  // Centre de la zone (pixels)
+  const cx2d = (TL.x + TR.x + BR.x + BL.x) / 4;
+  const cy2d = (TL.y + TR.y + BR.y + BL.y) / 4;
+
+  // ── FOV : depuis la convergence perspective
+  // Si topW < botW → on voit la table en perspective
+  // La focale se déduit du point de fuite vertical
+  const conv = Math.abs(botW - topW);
+  let focalPx;
+  if (conv < 5) {
+    // Vue presque orthogonale → longue focale
+    focalPx = H * 1.5;
+  } else {
+    // Point de fuite à distance focalPx au-dessus du centre top
+    focalPx = (topW * avgH) / Math.max(conv, 1);
+    focalPx = Math.max(focalPx, H * 0.4);
+  }
+  const fovY = 2 * Math.atan(H * 0.5 / focalPx) * 180 / Math.PI;
+  const FOV  = Math.max(25, Math.min(85, fovY));
+
+  // ── Distance caméra : ratio taille 3D / taille projetée
+  // À distance d, un objet de largeur TW projette topW pixels
+  // topW / W = TW / (2 * d * tan(FOV/2))  [approximation centrée]
+  const tanHalf = Math.tan(FOV * Math.PI / 360);
+  const camDist = (TW * W) / (2 * avgW * tanHalf);
+
+  // ── Pitch : angle de la caméra vers le bas
+  // Rapport entre la hauteur perçue et la largeur → donne l'angle
+  const aspect = W / H;
+  const pitchRad = Math.atan2(avgH / H, avgW / W / aspect);
+  // On convertit : la table vue depuis en haut à angle pitchRad
+  // → la caméra est à camDist * sin(pitch) au-dessus, camDist * cos(pitch) devant
+  const camY = camDist * Math.sin(pitchRad);
+  const camZ = camDist * Math.cos(pitchRad);
+
+  // ── Roll : inclinaison gauche/droite de la table
+  const midTopX = (TL.x + TR.x) / 2;
+  const midBotX = (BL.x + BR.x) / 2;
+  const midTopY = (TL.y + TR.y) / 2;
+  const midBotY = (BL.y + BR.y) / 2;
+  const rollRad = -Math.atan2(midBotX - midTopX, midBotY - midTopY) * 0.35;
+
+  // ── Décalage latéral (caméra pas parfaitement centrée)
+  const ndcX = (cx2d / W - 0.5);   // -0.5..+0.5
+  const ndcY = (cy2d / H - 0.5);   // -0.5..+0.5
+  const camX = ndcX * camDist * tanHalf * 2.2;
+  // Offset Z supplémentaire si la zone est en haut ou bas d'écran
+  const camZoff = ndcY * camDist * 0.5;
+
+  // ── Construire la caméra
+  const camera = new THREE.PerspectiveCamera(FOV, W / H, 0.01, 100);
+  camera.position.set(camX, camY, camZ + camZoff);
+
+  // Point de regard : centre de la table + offset latéral
+  const target = new THREE.Vector3(camX * 0.3, 0, 0);
+  camera.lookAt(target);
+
+  // Appliquer le roll
+  if (Math.abs(rollRad) > 0.005) camera.rotateZ(rollRad);
+  camera.updateProjectionMatrix();
+
+  // ── Vérification : projeter les 4 coins 3D et mesurer l'erreur
+  const corners3D = [
+    new THREE.Vector3(-TW/2, 0, -TD/2),
+    new THREE.Vector3( TW/2, 0, -TD/2),
+    new THREE.Vector3( TW/2, 0,  TD/2),
+    new THREE.Vector3(-TW/2, 0,  TD/2),
+  ];
+  let ex = 0, ey = 0;
+  corners3D.forEach((v3, i) => {
+    const proj = v3.clone().project(camera);
+    const px = (proj.x + 1) / 2 * W;
+    const py = (-proj.y + 1) / 2 * H;
+    ex += (pts[i].x - px) / 4;
+    ey += (pts[i].y - py) / 4;
+  });
+  // Correction de la position caméra
+  camera.position.x += ex / W * TW * 0.6;
+  camera.position.z -= ey / H * TD * 0.4;
+  camera.lookAt(target);
+  camera.updateProjectionMatrix();
+
+  return camera;
+}
+
+// ─────────────────────────────────
+//  CONSTRUCTION DE LA SCÈNE
+// ─────────────────────────────────
+function buildScene() {
+  document.getElementById('threeCanvas').style.display = 'block';
+
+  // Reset scène
+  while (scene.children.length) scene.remove(scene.children[0]);
+
+  // Lumières
+  scene.add(new THREE.AmbientLight(0xffffff, 1.1));
+
+  const sun = new THREE.DirectionalLight(0xfff8f0, 1.3);
+  sun.position.set(2, 6, 3);
+  sun.castShadow = true;
+  sun.shadow.mapSize.set(1024, 1024);
+  sun.shadow.camera.left = -3; sun.shadow.camera.right = 3;
+  sun.shadow.camera.top = 2; sun.shadow.camera.bottom = -2;
+  sun.shadow.camera.near = 0.1; sun.shadow.camera.far = 20;
+  scene.add(sun);
+
+  scene.add(new THREE.HemisphereLight(0xddeeff, 0x8899bb, 0.5));
+
+  // Plan table (ombre seulement, invisible)
+  const floor = new THREE.Mesh(
+    new THREE.PlaneGeometry(TW * 3, TD * 3),
+    new THREE.ShadowMaterial({ opacity: 0.20 })
+  );
+  floor.rotation.x = -Math.PI / 2;
+  floor.receiveShadow = true;
+  scene.add(floor);
+
+  // Composition 3D
+  const comp = makeComposition(PAL[style]);
+  scene.add(comp);
+
+  // Caméra calibrée
+  activeCamera = calibrateCamera();
+
+  // Rendu animé
+  let startTime = null;
+  renderer.setAnimationLoop((ts) => {
+    if (!startTime) startTime = ts;
+    const elapsed = (ts - startTime) / 1000;
+
+    // Entrée : scale Y de 0 à 1 en 0.7s
+    const entryT  = Math.min(elapsed / 0.7, 1);
+    const entryS  = easeOutBack(entryT);
+    comp.scale.y  = Math.max(0.001, entryS);
+
+    // Flottement léger des verres
+    comp.children.forEach((c, i) => {
+      if (c.userData.float) {
+        c.position.y = c.userData.baseY + Math.sin(elapsed * 0.65 + i) * 0.006;
+      }
+    });
+
+    renderer.render(scene, activeCamera);
+  });
+
+  document.getElementById('prods').classList.add('on');
+  setSt('Composition posée ✓', 'g');
+}
+
+function easeOutBack(t) {
+  const c1 = 1.70158, c3 = c1 + 1;
+  if (t >= 1) return 1;
+  return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
+}
+
+// ─────────────────────────────────
+//  MODÈLES 3D AUTHENTIQUES DURALEX
+// ─────────────────────────────────
+function matGlass(p, opacityMult = 1) {
+  return new THREE.MeshPhysicalMaterial({
+    color: p.color,
+    transparent: true,
+    opacity: p.opacity * opacityMult,
+    roughness: p.roughness,
+    metalness: 0,
+    transmission: p.transmission,
+    thickness: 0.5,
+    reflectivity: 0.9,
+    envMapIntensity: 1.0,
+    side: THREE.DoubleSide,
+  });
+}
+
+// Verre Picardie — profil lathe authentique
+function makePicardie(p, s = 1.0) {
+  // Profil [rayon, hauteur] — forme iconique Picardie
+  const pts2d = [
+    [0.000, 0.000], // centre base
+    [0.020, 0.000],
+    [0.022, 0.006],
+    [0.024, 0.018],
+    [0.027, 0.040],
+    [0.031, 0.068],
+    [0.034, 0.094],
+    [0.037, 0.116],
+  ].map(([r, h]) => new THREE.Vector2(r * s, h * s));
+
+  const g = new THREE.Group();
+
+  // Corps
+  const body = new THREE.Mesh(new THREE.LatheGeometry(pts2d, 36), matGlass(p));
+  body.castShadow = true;
+  g.add(body);
+
+  // Lèvre supérieure
+  const lip = new THREE.Mesh(
+    new THREE.TorusGeometry(0.037 * s, 0.0022 * s, 10, 36),
+    matGlass(p, 1.15)
+  );
+  lip.rotation.x = Math.PI / 2;
+  lip.position.y = 0.116 * s;
+  lip.castShadow = true;
+  g.add(lip);
+
+  // Socle épais (caractéristique Duralex)
+  const base = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.021 * s, 0.019 * s, 0.010 * s, 36),
+    matGlass(p, 1.2)
+  );
+  base.position.y = 0.005 * s;
+  base.castShadow = true;
+  g.add(base);
+
+  return g;
+}
+
+// Carafe Gigogne — profil lathe
+function makeGigogne(p) {
+  const pts2d = [
+    [0.000, 0.000],
+    [0.018, 0.000],
+    [0.020, 0.008],
+    [0.038, 0.040],
+    [0.050, 0.085],
+    [0.052, 0.120],
+    [0.044, 0.158],
+    [0.026, 0.192],
+    [0.016, 0.215],
+    [0.014, 0.232],
+    [0.018, 0.248],
+    [0.020, 0.255],
+  ].map(([r, h]) => new THREE.Vector2(r, h));
+
+  const g = new THREE.Group();
+
+  const body = new THREE.Mesh(new THREE.LatheGeometry(pts2d, 36), matGlass(p, 0.82));
+  body.castShadow = true;
+  g.add(body);
+
+  // Bouchon sphère
+  const stopper = new THREE.Mesh(
+    new THREE.SphereGeometry(0.015, 20, 20),
+    matGlass(p, 1.0)
+  );
+  stopper.position.y = 0.274;
+  stopper.castShadow = true;
+  g.add(stopper);
+
+  // Base
+  const base = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.022, 0.018, 0.009, 36),
+    matGlass(p, 1.2)
+  );
+  base.position.y = 0.004;
+  base.castShadow = true;
+  g.add(base);
+
+  return g;
+}
+
+// Placemat rond avec liseré bleu Duralex
+function makePlacemat() {
+  const g = new THREE.Group();
+
+  const disc = new THREE.Mesh(
+    new THREE.CircleGeometry(0.17, 64),
+    new THREE.MeshStandardMaterial({ color: 0xfaf8f5, roughness: 0.88, side: THREE.DoubleSide })
+  );
+  disc.rotation.x = -Math.PI / 2;
+  disc.position.y = 0.0005;
+  disc.receiveShadow = true;
+  g.add(disc);
+
+  const border = new THREE.Mesh(
+    new THREE.RingGeometry(0.153, 0.17, 64),
+    new THREE.MeshBasicMaterial({ color: 0x1a3a6b, side: THREE.DoubleSide, transparent: true, opacity: 0.85 })
+  );
+  border.rotation.x = -Math.PI / 2;
+  border.position.y = 0.001;
+  g.add(border);
+
+  return g;
+}
+
+// Couvert métal (couteau + fourchette)
+function makeCutlery(side = 1) {
+  const mat = new THREE.MeshStandardMaterial({ color: 0xd8d0c8, metalness: 0.88, roughness: 0.10 });
+  const g   = new THREE.Group();
+
+  // Couteau
+  const knife = new THREE.Mesh(new THREE.BoxGeometry(0.006, 0.001, 0.145), mat);
+  knife.position.set(side * 0.006, 0.0005, 0);
+  knife.castShadow = true;
+  g.add(knife);
+
+  // Fourchette
+  const fork = new THREE.Mesh(new THREE.BoxGeometry(0.005, 0.001, 0.130), mat);
+  fork.position.set(-side * 0.006, 0.0005, 0.005);
+  fork.castShadow = true;
+  g.add(fork);
+
+  return g;
+}
+
+// Composition complète — tout posé sur Y=0
+function makeComposition(palette) {
+  const g = new THREE.Group();
+
+  // ── 2 couverts avec placemat avant ──
+  const seats = [
+    { x: -TW * 0.27, z: TD * 0.26 },
+    { x:  TW * 0.27, z: TD * 0.26 },
+  ];
+
+  seats.forEach((pos) => {
+    const pm = makePlacemat();
+    pm.position.set(pos.x, 0, pos.z);
+    pm.userData = { float: false };
+    g.add(pm);
+
+    const glass = makePicardie(palette, 1.0);
+    glass.position.set(pos.x, 0, pos.z);
+    glass.userData = { float: true, baseY: 0 };
+    g.add(glass);
+
+    const cl = makeCutlery(-1);
+    cl.position.set(pos.x - 0.23, 0, pos.z);
+    g.add(cl);
+
+    const cr = makeCutlery(1);
+    cr.position.set(pos.x + 0.21, 0, pos.z);
+    g.add(cr);
+  });
+
+  // ── 2 verres à vin arrière (légèrement plus petits) ──
+  seats.forEach((pos) => {
+    const wg = makePicardie(palette, 0.80);
+    wg.position.set(pos.x, 0, -TD * 0.20);
+    wg.userData = { float: true, baseY: 0 };
+    g.add(wg);
+  });
+
+  // ── Carafe centrale ──
+  const carafe = makeGigogne(palette);
+  carafe.position.set(0, 0, -TD * 0.02);
+  carafe.userData = { float: true, baseY: 0 };
+  g.add(carafe);
+
+  return g;
+}
+
+// ─────────────────────────────────
+//  GESTION DES POINTS
+// ─────────────────────────────────
+const GUIDE_STEPS = [
+  { ico:'👆', txt:'Coin <strong style="color:#60a5fa">haut-gauche</strong><br>de la table' },
+  { ico:'↗️', txt:'Coin <strong style="color:#60a5fa">haut-droit</strong><br>de la table' },
+  { ico:'↘️', txt:'Coin <strong style="color:#60a5fa">bas-droit</strong><br>de la table' },
+  { ico:'↙️', txt:'Coin <strong style="color:#60a5fa">bas-gauche</strong><br>de la table' },
+];
+
+function enableTap() {
+  const tap = document.getElementById('tap');
+  tap.classList.remove('off');
+  tap.ontouchend = e => { e.preventDefault(); const t=e.changedTouches[0]; addPt(t.clientX,t.clientY); };
+  tap.onclick = e => addPt(e.clientX, e.clientY);
+}
+
+function addPt(x, y) {
+  if (pts.length >= 4) return;
+  pts.push({x, y});
+
+  const d = document.createElement('div');
+  d.className = 'dot'; d.style.left = x+'px'; d.style.top = y+'px'; d.textContent = pts.length;
+  document.body.appendChild(d); dots.push(d);
+
+  updateSVG();
+
+  if (pts.length < 4) {
+    const g = GUIDE_STEPS[pts.length];
+    document.getElementById('iico').textContent = g.ico;
+    document.getElementById('itxt').innerHTML   = g.txt;
+    document.getElementById('icnt').textContent = pts.length + ' / 4 points';
+  } else {
+    document.getElementById('tap').classList.add('off');
+    document.getElementById('instr').classList.add('off');
+    buildScene();
+  }
+}
+
+function updateSVG() {
+  ['l01','l12','l23','l30'].forEach((id, i) => {
+    const a = pts[i], b = pts[(i+1)%4];
+    if (!a || !b) return;
+    const l = document.getElementById(id);
+    l.setAttribute('x1',a.x); l.setAttribute('y1',a.y);
+    l.setAttribute('x2',b.x); l.setAttribute('y2',b.y);
+    l.setAttribute('opacity','1');
+  });
+  if (pts.length === 4) {
+    const poly = document.getElementById('poly');
+    poly.setAttribute('points', pts.map(p=>p.x+','+p.y).join(' '));
+    poly.setAttribute('opacity','1');
+  }
+}
+
+// ─────────────────────────────────
+//  DÉMARRAGE
+// ─────────────────────────────────
+async function startAR() {
+  isAR = true;
+  openUI();
+  initThree();
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video:{facingMode:{ideal:'environment'}, width:{ideal:1920}}, audio:false
+    });
+    const v = document.getElementById('video');
+    v.srcObject = stream; await v.play();
+    setSt('Touchez les 4 coins','b');
+  } catch(e) {
+    setSt('Caméra indisponible','y');
+  }
+  enableTap();
+}
+
+function startDemo() {
+  isAR = false;
+  openUI();
+  initThree();
+  setSt('Mode aperçu','g');
+  const W = window.innerWidth, H = window.innerHeight;
+  const cx=W/2, cy=H*0.47, rw=W*0.37, rh=H*0.16;
+  // Trapèze réaliste : table vue à ~55°
+  const dpts = [
+    {x:cx-rw*0.50, y:cy-rh},
+    {x:cx+rw*0.50, y:cy-rh},
+    {x:cx+rw,      y:cy+rh},
+    {x:cx-rw,      y:cy+rh},
+  ];
+  dpts.forEach((pt, i) => {
+    pts.push(pt);
+    const d = document.createElement('div');
+    d.className='dot'; d.style.left=pt.x+'px'; d.style.top=pt.y+'px'; d.textContent=i+1;
+    document.body.appendChild(d); dots.push(d);
+  });
+  updateSVG();
+  document.getElementById('instr').classList.add('off');
+  buildScene();
+}
+
+function openUI() {
+  document.getElementById('splash').classList.add('off');
+  document.getElementById('hdr').classList.add('on');
+  document.getElementById('ctrl').classList.add('on');
+}
+
+function goHome() {
+  renderer && renderer.setAnimationLoop(null);
+  const v = document.getElementById('video');
+  if (v.srcObject) { v.srcObject.getTracks().forEach(t=>t.stop()); v.srcObject=null; }
+  clearAll();
+  document.getElementById('threeCanvas').style.display='none';
+  document.getElementById('hdr').classList.remove('on');
+  document.getElementById('ctrl').classList.remove('on');
+  document.getElementById('prods').classList.remove('on');
+  document.getElementById('instr').classList.remove('off');
+  document.getElementById('splash').classList.remove('off');
+  resetGuide();
+  isAR = false;
+}
+
+function resetZone() {
+  renderer && renderer.setAnimationLoop(null);
+  clearAll();
+  document.getElementById('threeCanvas').style.display='none';
+  document.getElementById('prods').classList.remove('on');
+  document.getElementById('instr').classList.remove('off');
+  resetGuide();
+  if (isAR) { setSt('Touchez les 4 coins','b'); enableTap(); }
+  else startDemo();
+}
+
+function clearAll() {
+  dots.forEach(d=>d.remove()); dots=[]; pts=[];
+  ['l01','l12','l23','l30'].forEach(id=>document.getElementById(id).setAttribute('opacity','0'));
+  document.getElementById('poly').setAttribute('points','').setAttribute('opacity','0');
+  document.getElementById('tap').classList.remove('off');
+}
+
+function resetGuide() {
+  document.getElementById('iico').textContent='👆';
+  document.getElementById('itxt').innerHTML='Touchez le coin<br><strong style="color:#60a5fa">haut-gauche</strong> de la table';
+  document.getElementById('icnt').textContent='0 / 4 points';
+}
+
+function setStyle(el, s) {
+  style = s;
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+  if (pts.length === 4) buildScene();
+}
+
+function setSt(t,c) {
+  document.getElementById('stxt').textContent=t;
+  document.getElementById('sd').className='sd '+c;
+}
+</script>
+</body>
+</html>
