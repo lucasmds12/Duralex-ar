@@ -1,0 +1,1742 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Duralex® — Boutique</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════
+   DURALEX® — Design System
+   Luxe industriel français · Marine + Crème + Or
+═══════════════════════════════════════════════ */
+:root {
+  --bleu:       #1a3a6b;
+  --bleu-vif:   #1e4d9b;
+  --bleu-pale:  #e8eff8;
+  --or:         #c9a84c;
+  --or-pale:    #f5edd6;
+  --blanc:      #ffffff;
+  --creme:      #faf8f4;
+  --creme-2:    #f2ede4;
+  --gris:       #6b7280;
+  --gris-cl:    #e5e7eb;
+  --noir:       #111827;
+  --rouge:      #c8102e;
+  --vert:       #16a34a;
+}
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0 }
+html { scroll-behavior:smooth }
+body {
+  font-family:'Barlow',sans-serif; font-weight:400;
+  background:var(--creme); color:var(--noir);
+  -webkit-text-size-adjust:100%; overflow-x:hidden;
+  touch-action:pan-y;
+}
+
+/* ═══ VUES ═══ */
+.view { display:none; min-height:100vh }
+.view.active { display:block }
+
+/* ═══════════════════════════════════
+   BARRE DE NAV
+═══════════════════════════════════ */
+.nav {
+  position:sticky; top:0; z-index:90;
+  background:var(--bleu);
+  border-bottom:2px solid rgba(201,168,76,0.4);
+}
+.nav-top {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 20px; height:56px;
+}
+.nav-logo {
+  cursor:pointer; -webkit-tap-highlight-color:transparent;
+}
+.nav-logo svg { height:22px }
+.nav-logo:active { opacity:.7 }
+
+.nav-actions { display:flex; align-items:center; gap:4px }
+.nav-btn {
+  width:40px; height:40px; border-radius:50%; border:none;
+  background:rgba(255,255,255,0.08); color:#fff; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px; -webkit-tap-highlight-color:transparent;
+  position:relative; transition:background .2s;
+}
+.nav-btn:active { background:rgba(255,255,255,0.18) }
+.badge {
+  position:absolute; top:4px; right:4px;
+  width:16px; height:16px; border-radius:50%;
+  background:var(--or); color:var(--bleu);
+  font-size:9px; font-weight:700;
+  display:flex; align-items:center; justify-content:center;
+  display:none;
+}
+.badge.show { display:flex }
+
+.nav-cats {
+  display:flex; gap:0; overflow-x:auto; scrollbar-width:none;
+  border-top:1px solid rgba(255,255,255,0.08);
+  -webkit-overflow-scrolling:touch;
+}
+.nav-cat {
+  padding:10px 18px; white-space:nowrap; cursor:pointer;
+  font-size:10px; font-weight:600; letter-spacing:2.5px;
+  text-transform:uppercase; color:rgba(255,255,255,0.55);
+  border-bottom:2px solid transparent; transition:all .2s;
+  -webkit-tap-highlight-color:transparent; flex-shrink:0;
+}
+.nav-cat.active { color:#fff; border-bottom-color:var(--or) }
+.nav-cat:active { color:rgba(255,255,255,0.85) }
+
+/* ═══════════════════════════════════
+   VIEW HOME — CATALOGUE
+═══════════════════════════════════ */
+
+/* Hero */
+.hero {
+  background:var(--bleu);
+  padding:36px 24px 40px;
+  position:relative; overflow:hidden;
+}
+.hero::before {
+  content:''; position:absolute;
+  width:300px; height:300px; border-radius:50%;
+  border:1px solid rgba(201,168,76,0.15);
+  top:-80px; right:-80px;
+}
+.hero::after {
+  content:''; position:absolute;
+  width:200px; height:200px; border-radius:50%;
+  border:1px solid rgba(255,255,255,0.05);
+  bottom:-60px; left:-40px;
+}
+.hero-eyebrow {
+  font-size:9px; letter-spacing:4px; color:var(--or);
+  text-transform:uppercase; margin-bottom:12px;
+  position:relative; z-index:1;
+}
+.hero-title {
+  font-family:'Libre Baskerville',serif;
+  font-size:28px; color:#fff; line-height:1.2;
+  margin-bottom:10px; position:relative; z-index:1;
+}
+.hero-title em { font-style:italic; color:rgba(255,255,255,0.6) }
+.hero-sub {
+  font-size:12px; color:rgba(255,255,255,0.48); line-height:1.7;
+  margin-bottom:24px; max-width:260px; position:relative; z-index:1;
+}
+.hero-pills { display:flex; gap:8px; flex-wrap:wrap; position:relative; z-index:1 }
+.hero-pill {
+  padding:6px 14px; border-radius:2px;
+  border:1px solid rgba(201,168,76,0.4);
+  background:rgba(201,168,76,0.08);
+  font-size:10px; letter-spacing:1.5px; color:var(--or);
+  text-transform:uppercase;
+}
+
+/* AR Banner */
+.ar-banner {
+  margin:20px 16px;
+  background:var(--bleu);
+  border-radius:4px; overflow:hidden;
+  display:flex; align-items:stretch;
+  border:1px solid rgba(201,168,76,0.3);
+  cursor:pointer; -webkit-tap-highlight-color:transparent;
+}
+.ar-banner:active { opacity:.9 }
+.ar-banner-left {
+  background:linear-gradient(135deg,var(--or) 0%,#b8943e 100%);
+  padding:16px; display:flex; align-items:center; justify-content:center;
+  font-size:28px; min-width:64px;
+}
+.ar-banner-right { padding:14px 16px; flex:1 }
+.ar-banner-title {
+  font-family:'Libre Baskerville',serif; font-size:14px; color:#fff;
+  margin-bottom:4px;
+}
+.ar-banner-sub { font-size:10px; color:rgba(255,255,255,0.5); line-height:1.5 }
+.ar-banner-cta {
+  display:inline-block; margin-top:8px; padding:5px 12px;
+  background:var(--or); color:var(--bleu);
+  font-size:9px; font-weight:700; letter-spacing:2px;
+  text-transform:uppercase; border-radius:2px;
+}
+
+/* Section titre */
+.section-header {
+  padding:24px 16px 12px;
+  display:flex; align-items:flex-end; justify-content:space-between;
+}
+.section-title {
+  font-family:'Libre Baskerville',serif; font-size:20px; color:var(--bleu);
+}
+.section-more {
+  font-size:10px; letter-spacing:2px; color:var(--or);
+  text-transform:uppercase; text-decoration:none; cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+
+/* Grille produits */
+.products-grid {
+  display:grid; grid-template-columns:repeat(2,1fr);
+  gap:12px; padding:0 16px 24px;
+}
+.product-card {
+  background:var(--blanc); border-radius:4px;
+  overflow:hidden; cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  transition:transform .15s; box-shadow:0 1px 4px rgba(0,0,0,0.06);
+  position:relative;
+}
+.product-card:active { transform:scale(0.97) }
+.product-img {
+  aspect-ratio:1; background:var(--creme-2);
+  display:flex; align-items:center; justify-content:center;
+  position:relative; overflow:hidden;
+}
+.product-img svg { width:65%; height:65% }
+.product-badge {
+  position:absolute; top:8px; left:8px;
+  padding:3px 8px; border-radius:2px;
+  font-size:8px; font-weight:700; letter-spacing:1.5px;
+  text-transform:uppercase;
+}
+.badge-new { background:var(--bleu); color:#fff }
+.badge-iconic { background:var(--or); color:var(--bleu) }
+.badge-ar { background:var(--vert); color:#fff }
+.product-info { padding:10px 12px 14px }
+.product-name {
+  font-family:'Libre Baskerville',serif; font-size:13px;
+  color:var(--noir); margin-bottom:3px;
+}
+.product-desc {
+  font-size:10px; color:var(--gris); line-height:1.5;
+  margin-bottom:8px;
+}
+.product-footer { display:flex; align-items:center; justify-content:space-between }
+.product-price {
+  font-family:'Barlow Condensed',sans-serif; font-size:16px;
+  font-weight:700; color:var(--bleu); letter-spacing:0.5px;
+}
+.product-price small {
+  font-size:10px; font-weight:400; color:var(--gris);
+  font-family:'Barlow',sans-serif; letter-spacing:0;
+}
+.product-add {
+  width:30px; height:30px; border-radius:50%;
+  background:var(--bleu); border:none; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  color:#fff; font-size:18px; line-height:1;
+  -webkit-tap-highlight-color:transparent; transition:background .2s;
+}
+.product-add:active { background:var(--bleu-vif) }
+
+/* Carousel horizontal */
+.carousel {
+  padding:0 16px 24px;
+  overflow-x:auto; scrollbar-width:none;
+  display:flex; gap:12px;
+  -webkit-overflow-scrolling:touch;
+}
+.carousel-card {
+  flex-shrink:0; width:160px;
+  background:var(--blanc); border-radius:4px;
+  overflow:hidden; cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  box-shadow:0 1px 4px rgba(0,0,0,0.06);
+}
+.carousel-card:active { opacity:.85 }
+.carousel-img {
+  height:120px; background:var(--creme-2);
+  display:flex; align-items:center; justify-content:center;
+}
+.carousel-img svg { width:55%; height:55% }
+.carousel-info { padding:8px 10px 12px }
+.carousel-name {
+  font-family:'Libre Baskerville',serif; font-size:12px;
+  color:var(--noir); margin-bottom:2px;
+}
+.carousel-price {
+  font-family:'Barlow Condensed',sans-serif; font-size:14px;
+  font-weight:700; color:var(--bleu);
+}
+
+/* Bande "Made in France" */
+.made-band {
+  background:var(--bleu); padding:20px 24px;
+  display:flex; align-items:center; gap:16px; margin:8px 0;
+}
+.made-flag { font-size:28px }
+.made-text {}
+.made-title {
+  font-family:'Libre Baskerville',serif; font-size:14px; color:#fff;
+  margin-bottom:2px;
+}
+.made-sub { font-size:10px; color:rgba(255,255,255,0.45); line-height:1.5 }
+
+/* ═══════════════════════════════════
+   VIEW DETAIL PRODUIT
+═══════════════════════════════════ */
+.detail-back {
+  display:flex; align-items:center; gap:10px;
+  padding:16px 20px 0; cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  color:var(--bleu); font-size:12px; letter-spacing:1.5px; text-transform:uppercase;
+}
+.detail-back:active { opacity:.6 }
+.detail-back svg { width:16px; height:16px }
+
+.detail-img {
+  height:300px; background:var(--creme-2);
+  display:flex; align-items:center; justify-content:center;
+  margin:16px; border-radius:4px; position:relative;
+}
+.detail-img svg { width:45%; height:45% }
+.detail-ar-btn {
+  position:absolute; bottom:12px; right:12px;
+  background:var(--bleu); color:#fff;
+  border:none; border-radius:3px; cursor:pointer;
+  padding:8px 14px;
+  display:flex; align-items:center; gap:7px;
+  font-family:'Barlow',sans-serif; font-size:10px;
+  font-weight:600; letter-spacing:2px; text-transform:uppercase;
+  -webkit-tap-highlight-color:transparent;
+  box-shadow:0 4px 12px rgba(26,58,107,0.35);
+}
+.detail-ar-btn:active { opacity:.85 }
+
+.detail-body { padding:0 20px 100px }
+.detail-cat {
+  font-size:9px; letter-spacing:3px; color:var(--or);
+  text-transform:uppercase; margin-bottom:8px;
+}
+.detail-name {
+  font-family:'Libre Baskerville',serif; font-size:26px;
+  color:var(--noir); margin-bottom:6px; line-height:1.2;
+}
+.detail-tagline { font-size:13px; color:var(--gris); margin-bottom:16px; line-height:1.6 }
+
+/* Couleurs */
+.detail-section-title {
+  font-size:9px; letter-spacing:3px; text-transform:uppercase;
+  color:var(--gris); margin-bottom:10px; margin-top:20px;
+}
+.color-swatches { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:4px }
+.swatch {
+  width:32px; height:32px; border-radius:50%; cursor:pointer;
+  border:2px solid transparent; transition:all .2s;
+  -webkit-tap-highlight-color:transparent;
+}
+.swatch.active { border-color:var(--bleu); box-shadow:0 0 0 2px var(--blanc),0 0 0 4px var(--bleu) }
+
+/* Tailles */
+.size-chips { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:4px }
+.size-chip {
+  padding:7px 14px; border:1.5px solid var(--gris-cl);
+  border-radius:3px; font-size:11px; color:var(--gris);
+  cursor:pointer; transition:all .2s; -webkit-tap-highlight-color:transparent;
+  font-family:'Barlow Condensed',sans-serif; letter-spacing:0.5px;
+}
+.size-chip.active { border-color:var(--bleu); color:var(--bleu); font-weight:600 }
+
+/* Caractéristiques */
+.detail-features {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:10px; margin:20px 0;
+}
+.feature {
+  background:var(--creme-2); border-radius:4px;
+  padding:12px; display:flex; flex-direction:column; gap:4px;
+}
+.feature-ico { font-size:18px }
+.feature-label { font-size:10px; color:var(--gris); letter-spacing:0.5px }
+.feature-val { font-size:12px; font-weight:600; color:var(--noir) }
+
+/* Prix + CTA */
+.detail-buy {
+  position:fixed; bottom:0; left:0; right:0; z-index:80;
+  background:var(--blanc);
+  border-top:1px solid var(--gris-cl);
+  padding:14px 20px 32px;
+  display:flex; align-items:center; gap:12px;
+  display:none;
+}
+.detail-buy.show { display:flex }
+.detail-price-wrap { flex:1 }
+.detail-price-label { font-size:9px; color:var(--gris); letter-spacing:2px; text-transform:uppercase }
+.detail-price-val {
+  font-family:'Barlow Condensed',sans-serif; font-size:26px;
+  font-weight:700; color:var(--bleu);
+}
+.btn-add-cart {
+  background:var(--bleu); color:#fff; border:none; border-radius:3px;
+  padding:14px 22px; cursor:pointer;
+  font-family:'Barlow',sans-serif; font-size:10px; font-weight:600;
+  letter-spacing:2.5px; text-transform:uppercase;
+  display:flex; align-items:center; gap:8px;
+  -webkit-tap-highlight-color:transparent; transition:background .2s;
+}
+.btn-add-cart:active { background:var(--bleu-vif) }
+
+/* ═══════════════════════════════════
+   VIEW PANIER
+═══════════════════════════════════ */
+.cart-header {
+  padding:20px 20px 0;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.cart-title {
+  font-family:'Libre Baskerville',serif; font-size:22px; color:var(--noir);
+}
+.cart-count { font-size:12px; color:var(--gris) }
+
+.cart-empty {
+  display:flex; flex-direction:column; align-items:center;
+  padding:60px 32px; text-align:center; gap:16px;
+}
+.cart-empty-ico { font-size:48px; opacity:.3 }
+.cart-empty-txt { font-size:14px; color:var(--gris); line-height:1.7 }
+
+.cart-items { padding:16px }
+.cart-item {
+  display:flex; gap:12px; padding:12px 0;
+  border-bottom:1px solid var(--gris-cl);
+}
+.cart-item-img {
+  width:72px; height:72px; border-radius:4px;
+  background:var(--creme-2); flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+}
+.cart-item-img svg { width:60%; height:60% }
+.cart-item-info { flex:1 }
+.cart-item-name {
+  font-family:'Libre Baskerville',serif; font-size:14px;
+  color:var(--noir); margin-bottom:3px;
+}
+.cart-item-variant { font-size:11px; color:var(--gris); margin-bottom:8px }
+.cart-item-actions { display:flex; align-items:center; gap:10px }
+.qty-btn {
+  width:26px; height:26px; border-radius:50%; border:1.5px solid var(--gris-cl);
+  background:transparent; cursor:pointer; font-size:14px;
+  display:flex; align-items:center; justify-content:center;
+  color:var(--bleu); -webkit-tap-highlight-color:transparent; transition:all .2s;
+}
+.qty-btn:active { background:var(--bleu-pale) }
+.qty-val { font-size:14px; font-weight:600; color:var(--noir); min-width:20px; text-align:center }
+.cart-item-price {
+  font-family:'Barlow Condensed',sans-serif; font-size:18px;
+  font-weight:700; color:var(--bleu); align-self:flex-end;
+}
+
+.cart-summary {
+  margin:16px; padding:16px;
+  background:var(--blanc); border-radius:4px;
+  border:1px solid var(--gris-cl);
+}
+.cart-row {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:6px 0; font-size:13px; color:var(--gris);
+}
+.cart-row.total {
+  padding-top:12px; margin-top:8px; border-top:1.5px solid var(--gris-cl);
+  font-size:16px; font-weight:700; color:var(--noir);
+}
+.cart-row.free { color:var(--vert); font-size:11px }
+
+.btn-checkout {
+  display:flex; align-items:center; justify-content:center; gap:10px;
+  margin:12px 16px 32px; padding:16px;
+  background:var(--bleu); color:#fff; border:none; border-radius:3px;
+  font-family:'Barlow',sans-serif; font-size:11px; font-weight:600;
+  letter-spacing:3px; text-transform:uppercase; cursor:pointer; width:calc(100% - 32px);
+  -webkit-tap-highlight-color:transparent;
+}
+.btn-checkout:active { background:var(--bleu-vif) }
+
+/* ═══════════════════════════════════
+   VIEW AR
+═══════════════════════════════════ */
+#view-ar {
+  background:#000; position:fixed; inset:0; z-index:200;
+  display:none;
+}
+
+#ar-video { position:fixed; inset:0; z-index:1; width:100%; height:100%; object-fit:cover }
+#ar-canvas { position:fixed; inset:0; z-index:3; pointer-events:none; display:none }
+#ar-svg { position:fixed; inset:0; z-index:4; pointer-events:none }
+#ar-tap { position:fixed; inset:0; z-index:8; cursor:crosshair }
+#ar-tap.off { display:none }
+
+.ar-dot {
+  position:fixed; z-index:9; width:36px; height:36px; border-radius:50%;
+  background:var(--bleu); border:3px solid #fff;
+  transform:translate(-50%,-50%);
+  display:flex; align-items:center; justify-content:center;
+  font-size:12px; font-weight:700; color:#fff;
+  box-shadow:0 2px 12px rgba(0,0,0,0.5); pointer-events:none;
+  animation:arPop .3s cubic-bezier(.16,1,.3,1);
+}
+@keyframes arPop { from{transform:translate(-50%,-50%) scale(0);opacity:0} to{transform:translate(-50%,-50%) scale(1);opacity:1} }
+
+/* AR Header */
+.ar-hdr {
+  position:fixed; top:0; left:0; right:0; z-index:20;
+  height:58px; display:flex; align-items:center; justify-content:space-between;
+  padding:0 16px;
+  background:rgba(26,58,107,0.88);
+  backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(255,255,255,0.1);
+}
+.ar-product-info { display:flex; align-items:center; gap:10px }
+.ar-product-ico {
+  width:32px; height:32px; border-radius:3px;
+  background:rgba(255,255,255,0.1);
+  display:flex; align-items:center; justify-content:center;
+  font-size:16px;
+}
+.ar-product-name {
+  font-family:'Libre Baskerville',serif; font-size:13px; color:#fff;
+}
+.ar-product-sub { font-size:9px; color:rgba(255,255,255,0.45); letter-spacing:1px }
+.ar-close {
+  width:38px; height:38px; border-radius:50%; border:none;
+  background:rgba(255,255,255,0.1); color:#fff; cursor:pointer;
+  font-size:18px; display:flex; align-items:center; justify-content:center;
+  -webkit-tap-highlight-color:transparent;
+}
+
+/* AR Instruction */
+.ar-instr {
+  position:fixed; top:50%; left:50%; z-index:20;
+  transform:translate(-50%,-50%);
+  text-align:center; transition:opacity .5s; pointer-events:none;
+}
+.ar-instr.off { opacity:0 }
+.ar-ibox {
+  background:rgba(26,58,107,0.92);
+  backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,0.15);
+  border-radius:12px; padding:20px 26px;
+  display:flex; flex-direction:column; align-items:center; gap:8px;
+}
+.ar-iico { font-size:28px }
+.ar-itxt { font-size:13px; color:rgba(255,255,255,.9); line-height:1.7; text-align:center; max-width:220px }
+.ar-icnt { font-size:10px; color:rgba(255,255,255,.4); letter-spacing:2px; text-transform:uppercase }
+
+/* AR Controls */
+.ar-ctrl {
+  position:fixed; bottom:0; left:0; right:0; z-index:20;
+  background:rgba(26,58,107,0.94);
+  backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+  border-top:1px solid rgba(255,255,255,0.1);
+  padding:12px 16px 36px;
+  display:flex; flex-direction:column; gap:10px;
+}
+.ar-chips { display:flex; gap:7px; overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch }
+.ar-chip {
+  padding:7px 14px; white-space:nowrap;
+  border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.07);
+  color:rgba(255,255,255,.6); border-radius:3px;
+  font-size:10px; letter-spacing:2px; text-transform:uppercase;
+  font-family:'Barlow',sans-serif; cursor:pointer;
+  -webkit-tap-highlight-color:transparent; transition:all .2s;
+}
+.ar-chip.on { background:#fff; color:var(--bleu); border-color:#fff; font-weight:600 }
+.ar-btns { display:flex; gap:8px }
+.ar-btn {
+  flex:1; padding:12px; background:#fff; color:var(--bleu); border:none; border-radius:3px;
+  font-family:'Barlow',sans-serif; font-size:10px; font-weight:600; letter-spacing:2px;
+  text-transform:uppercase; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; gap:6px;
+  -webkit-tap-highlight-color:transparent;
+}
+.ar-btn:active { opacity:.75 }
+.ar-btn.ghost {
+  background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2);
+  color:rgba(255,255,255,.8); flex:0 0 auto; padding:12px 16px;
+}
+.ar-add-btn {
+  background:var(--or); color:var(--bleu);
+  flex:0 0 auto; padding:12px 16px; border:none; border-radius:3px;
+  font-family:'Barlow',sans-serif; font-size:10px; font-weight:700; letter-spacing:2px;
+  text-transform:uppercase; cursor:pointer;
+  display:flex; align-items:center; gap:6px;
+  -webkit-tap-highlight-color:transparent;
+}
+
+/* Toast */
+.toast {
+  position:fixed; bottom:120px; left:50%; z-index:300;
+  transform:translateX(-50%) translateY(20px);
+  background:var(--vert); color:#fff;
+  padding:10px 20px; border-radius:3px;
+  font-size:12px; font-weight:600; letter-spacing:1px;
+  opacity:0; transition:all .35s;
+  pointer-events:none; white-space:nowrap;
+}
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0) }
+
+/* ═══════════════════════════════════
+   SCROLLBAR MASQUÉE
+═══════════════════════════════════ */
+::-webkit-scrollbar { display:none }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ VIEW HOME ═══════════════ -->
+<div id="view-home" class="view active">
+
+  <nav class="nav">
+    <div class="nav-top">
+      <div class="nav-logo" onclick="goHome()">
+        <svg viewBox="0 0 200 56" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="100" cy="28" rx="97" ry="25" fill="none" stroke="white" stroke-width="1.5" opacity="0.5"/>
+          <text x="100" y="37" font-family="'Libre Baskerville',Georgia,serif" font-size="26" font-weight="700"
+            fill="white" text-anchor="middle" letter-spacing="5">DURALEX</text>
+          <text x="188" y="16" font-family="Arial" font-size="11" fill="white">®</text>
+        </svg>
+      </div>
+      <div class="nav-actions">
+        <button class="nav-btn" onclick="openAR(null)" title="AR">📷</button>
+        <button class="nav-btn" onclick="showCart()" title="Panier">
+          🛒<span class="badge" id="cartBadge">0</span>
+        </button>
+      </div>
+    </div>
+    <div class="nav-cats">
+      <div class="nav-cat active" onclick="filterCat(this,'all')">Tous</div>
+      <div class="nav-cat" onclick="filterCat(this,'verres')">Verres</div>
+      <div class="nav-cat" onclick="filterCat(this,'vaisselle')">Vaisselle</div>
+      <div class="nav-cat" onclick="filterCat(this,'conservation')">Conservation</div>
+      <div class="nav-cat" onclick="filterCat(this,'cuisson')">Cuisson</div>
+      <div class="nav-cat" onclick="filterCat(this,'tasses')">Tasses & Bols</div>
+    </div>
+  </nav>
+
+  <div id="home-content">
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-eyebrow">Fabriqué en France depuis 1945</div>
+      <h1 class="hero-title">L'art de la table<br><em>en verre trempé</em></h1>
+      <p class="hero-sub">Verre trempé 6× plus résistant. Design intemporel. SCOP française depuis juillet 2024.</p>
+      <div class="hero-pills">
+        <span class="hero-pill">Made in France</span>
+        <span class="hero-pill">Lave-vaisselle</span>
+        <span class="hero-pill">Micro-ondes</span>
+      </div>
+    </div>
+
+    <!-- AR Banner -->
+    <div class="ar-banner" onclick="openAR(null)">
+      <div class="ar-banner-left">📐</div>
+      <div class="ar-banner-right">
+        <div class="ar-banner-title">Visualiser sur votre table</div>
+        <div class="ar-banner-sub">Posez virtuellement la vaisselle Duralex chez vous grâce à la réalité augmentée.</div>
+        <span class="ar-banner-cta">Essayer l'AR →</span>
+      </div>
+    </div>
+
+    <!-- Iconiques -->
+    <div class="section-header">
+      <div class="section-title">Nos Iconiques</div>
+      <div class="section-more" onclick="filterCat(document.querySelector('.nav-cat'),'verres')">Voir tout</div>
+    </div>
+    <div class="carousel" id="iconiquesCarousel"></div>
+
+    <!-- Grille catalogue -->
+    <div class="section-header">
+      <div class="section-title" id="gridTitle">Toute la collection</div>
+    </div>
+    <div class="products-grid" id="productsGrid"></div>
+
+    <!-- Made in France -->
+    <div class="made-band">
+      <div class="made-flag">🇫🇷</div>
+      <div class="made-text">
+        <div class="made-title">SCOP Duralex — La Chapelle-Saint-Mesmin</div>
+        <div class="made-sub">144 salariés-associés. Verre trempé depuis 1945. Un héritage collectif.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════ VIEW DETAIL ═══════════════ -->
+<div id="view-detail" class="view">
+  <nav class="nav">
+    <div class="nav-top">
+      <div class="nav-logo" onclick="goHome()">
+        <svg viewBox="0 0 200 56">
+          <ellipse cx="100" cy="28" rx="97" ry="25" fill="none" stroke="white" stroke-width="1.5" opacity="0.5"/>
+          <text x="100" y="37" font-family="'Libre Baskerville',Georgia,serif" font-size="26" font-weight="700"
+            fill="white" text-anchor="middle" letter-spacing="5">DURALEX</text>
+          <text x="188" y="16" font-family="Arial" font-size="11" fill="white">®</text>
+        </svg>
+      </div>
+      <div class="nav-actions">
+        <button class="nav-btn" onclick="showCart()">🛒<span class="badge" id="cartBadge2">0</span></button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="detail-back" onclick="goHome()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+    Retour
+  </div>
+
+  <div id="detailContent"></div>
+  <div class="detail-buy show" id="detailBuy"></div>
+</div>
+
+<!-- ═══════════════ VIEW PANIER ═══════════════ -->
+<div id="view-cart" class="view">
+  <nav class="nav">
+    <div class="nav-top">
+      <div class="nav-logo" onclick="goHome()">
+        <svg viewBox="0 0 200 56">
+          <ellipse cx="100" cy="28" rx="97" ry="25" fill="none" stroke="white" stroke-width="1.5" opacity="0.5"/>
+          <text x="100" y="37" font-family="'Libre Baskerville',Georgia,serif" font-size="26" font-weight="700"
+            fill="white" text-anchor="middle" letter-spacing="5">DURALEX</text>
+          <text x="188" y="16" font-family="Arial" font-size="11" fill="white">®</text>
+        </svg>
+      </div>
+      <div class="nav-actions">
+        <button class="nav-btn" onclick="goHome()">🏠</button>
+      </div>
+    </div>
+  </nav>
+  <div id="cartContent"></div>
+</div>
+
+<!-- ═══════════════ VIEW AR ═══════════════ -->
+<div id="view-ar">
+  <video id="ar-video" autoplay playsinline muted></video>
+  <canvas id="ar-canvas"></canvas>
+
+  <!-- Écran intermédiaire : tap direct → getUserMedia dans la pile utilisateur -->
+  <div id="ar-start-screen" style="
+    display:none; position:fixed; inset:0; z-index:30;
+    background:rgba(13,34,71,0.97);
+    flex-direction:column; align-items:center; justify-content:center; gap:20px;
+    padding:32px;
+  ">
+    <svg style="width:160px" viewBox="0 0 200 56">
+      <ellipse cx="100" cy="28" rx="97" ry="25" fill="none" stroke="white" stroke-width="1.5" opacity="0.5"/>
+      <text x="100" y="37" font-family="serif" font-size="26" font-weight="700" fill="white" text-anchor="middle" letter-spacing="5">DURALEX</text>
+      <text x="188" y="16" font-family="Arial" font-size="11" fill="white">®</text>
+    </svg>
+    <div style="font-family:serif;font-size:22px;color:#fff;text-align:center;line-height:1.3">
+      Réalité Augmentée
+    </div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.5);text-align:center;max-width:260px;line-height:1.7">
+      Appuyez pour activer la caméra et poser la vaisselle Duralex sur votre table.
+    </div>
+    <button onclick="arStartCamera()" style="
+      margin-top:8px; padding:18px 36px;
+      background:#fff; color:#1a3a6b; border:none; border-radius:3px;
+      font-family:sans-serif; font-size:12px; font-weight:700;
+      letter-spacing:3px; text-transform:uppercase; cursor:pointer;
+      -webkit-tap-highlight-color:transparent;
+    ">📷 Activer la caméra</button>
+    <button onclick="closeAR()" style="
+      padding:10px 24px; background:transparent; color:rgba(255,255,255,0.4);
+      border:1px solid rgba(255,255,255,0.2); border-radius:3px;
+      font-family:sans-serif; font-size:10px; letter-spacing:2px;
+      text-transform:uppercase; cursor:pointer;
+    ">Annuler</button>
+  </div>
+
+  <svg id="ar-svg" xmlns="http://www.w3.org/2000/svg">
+    <defs><filter id="glo"><feGaussianBlur stdDeviation="2" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+    <polygon id="ar-poly" fill="rgba(26,58,107,0.10)" stroke="#60a5fa"
+      stroke-width="2" stroke-dasharray="8 5" filter="url(#glo)" points="" opacity="0"/>
+    <line id="ar-l01" stroke="rgba(96,165,250,0.5)" stroke-width="1.5" stroke-dasharray="6 5" opacity="0"/>
+    <line id="ar-l12" stroke="rgba(96,165,250,0.5)" stroke-width="1.5" stroke-dasharray="6 5" opacity="0"/>
+    <line id="ar-l23" stroke="rgba(96,165,250,0.5)" stroke-width="1.5" stroke-dasharray="6 5" opacity="0"/>
+    <line id="ar-l30" stroke="rgba(96,165,250,0.5)" stroke-width="1.5" stroke-dasharray="6 5" opacity="0"/>
+  </svg>
+  <div id="ar-tap"></div>
+
+  <div class="ar-hdr">
+    <div class="ar-product-info">
+      <div class="ar-product-ico" id="arProdIco">🥃</div>
+      <div>
+        <div class="ar-product-name" id="arProdName">Composition de table</div>
+        <div class="ar-product-sub" id="arProdSub">RÉALITÉ AUGMENTÉE</div>
+      </div>
+    </div>
+    <button class="ar-close" onclick="closeAR()">✕</button>
+  </div>
+
+  <div class="ar-instr" id="arInstr">
+    <div class="ar-ibox">
+      <div class="ar-iico" id="arIico">👆</div>
+      <div class="ar-itxt" id="arItxt">Touchez le coin<br><strong style="color:#60a5fa">haut-gauche</strong> de la table</div>
+      <div class="ar-icnt" id="arIcnt">0 / 4 points</div>
+    </div>
+  </div>
+
+  <div class="ar-ctrl">
+    <div class="ar-chips" id="arChips"></div>
+    <div class="ar-btns">
+      <button class="ar-btn" onclick="arReset()">↺ Redéfinir</button>
+      <button class="ar-btn ghost" id="arGyroBtn" onclick="arToggleGyro()">◎ Gyro</button>
+      <button class="ar-add-btn" onclick="arAddToCart()">+ Panier</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════════
+//  DURALEX® — App e-commerce + AR intégrée
+// ═══════════════════════════════════════════════════════════
+
+// ─────────────────────────────────────────────────────
+//  CATALOGUE PRODUITS (données réelles Duralex)
+// ─────────────────────────────────────────────────────
+const CATALOG = [
+  // ── Verres iconiques
+  {
+    id:'picardie-25', cat:'verres', iconic:true, ar:true,
+    name:'Picardie', tagline:'Le verre iconique des cantines françaises',
+    desc:'Verre à eau emblématique depuis 1945. Forme légèrement évasée, prise en main parfaite.',
+    price:3.90, unit:'verre', sizes:['15 cl','22 cl','25 cl','31 cl','50 cl'],
+    colors:['transparent','marine','ambré','prune','givré'],
+    features:[{ico:'🛡️',l:'Résistance',v:'6× verre ordinaire'},{ico:'🌡️',l:'Thermique',v:'-15°C à +130°C'},{ico:'🍽️',l:'Lave-vaisselle',v:'Oui'},{ico:'📡',l:'Micro-ondes',v:'Oui'}],
+    arStyle:'picardie', svg:'glass'
+  },
+  {
+    id:'gigogne-carafe', cat:'verres', iconic:true, ar:true,
+    name:'Carafe Gigogne', tagline:'La carafe à empilement brevetée',
+    desc:'Design ingénieux empilable. Parfaite pour servir eau ou jus de fruits. 1 litre.',
+    price:14.90, unit:'pièce', sizes:['1 L'],
+    colors:['transparent','marine'],
+    features:[{ico:'📐',l:'Volume',v:'1 litre'},{ico:'🔄',l:'Empilable',v:'Oui'},{ico:'🛡️',l:'Résistance',v:'Verre trempé'},{ico:'🇫🇷',l:'Origine',v:'France'}],
+    arStyle:'gigogne', svg:'carafe'
+  },
+  {
+    id:'picardie-set6', cat:'verres', iconic:false, ar:true,
+    name:'Picardie · Set ×6', tagline:'Le set table complet',
+    desc:'6 verres Picardie 25 cl. Idéal pour équiper une table de 6 convives.',
+    price:19.90, unit:'set', sizes:['25 cl'],
+    colors:['transparent','marine','ambré'],
+    features:[{ico:'📦',l:'Contenu',v:'6 verres'},{ico:'💧',l:'Contenance',v:'25 cl'},{ico:'🛡️',l:'Résistance',v:'Verre trempé'},{ico:'🇫🇷',l:'Origine',v:'France'}],
+    arStyle:'picardie', svg:'glass'
+  },
+  {
+    id:'bistro', cat:'verres', iconic:false, ar:false,
+    name:'Bistro', tagline:'L\'âme du café français',
+    desc:'Verre épais à la française, inspiré des bistrots. Idéal pour expresso, whisky, vodka.',
+    price:4.50, unit:'verre', sizes:['9 cl','16 cl','22 cl'],
+    colors:['transparent'],
+    features:[{ico:'☕',l:'Usage',v:'Chaud & froid'},{ico:'🍸',l:'Alcool',v:'Compatible'},{ico:'🛡️',l:'Paroi',v:'Épaisse'},{ico:'🇫🇷',l:'Origine',v:'France'}],
+    arStyle:'picardie', svg:'glass'
+  },
+  {
+    id:'manhattan', cat:'verres', iconic:false, ar:false,
+    name:'Manhattan', tagline:'Verre à whisky & cocktail',
+    desc:'Verre bas et trapu, parfait pour les whiskies on the rocks et les cocktails.',
+    price:5.90, unit:'verre', sizes:['18 cl','27 cl','31 cl'],
+    colors:['transparent','ambré'],
+    features:[{ico:'🥃',l:'Usage',v:'Whisky & cocktail'},{ico:'❄️',l:'Glaçons',v:'Adapté'},{ico:'🛡️',l:'Résistance',v:'Verre trempé'},{ico:'🇫🇷',l:'Origine',v:'France'}],
+    arStyle:'picardie', svg:'glass'
+  },
+  // ── Vaisselle
+  {
+    id:'assiette-plate', cat:'vaisselle', iconic:false, ar:false,
+    name:'Assiette Plate', tagline:'Transparence & élégance à table',
+    desc:'Assiette plate en verre trempé transparent. Moderne et résistante, passe au lave-vaisselle.',
+    price:7.90, unit:'pièce', sizes:['Ø 23 cm','Ø 26 cm'],
+    colors:['transparent'],
+    features:[{ico:'🍽️',l:'Diamètre',v:'23 ou 26 cm'},{ico:'🛡️',l:'Résistance',v:'Verre trempé'},{ico:'🍽️',l:'Lave-vaisselle',v:'Oui'},{ico:'🇫🇷',l:'Origine',v:'France'}],
+    arStyle:'picardie', svg:'plate'
+  },
+  {
+    id:'saladier-25', cat:'vaisselle', iconic:false, ar:false,
+    name:'Saladier', tagline:'Service et pâtisserie',
+    desc:'Saladier en verre borosilicaté transparent. Idéal pour préparer et servir.',
+    price:12.90, unit:'pièce', sizes:['15 cm','20 cm','26 cm'],
+    colors:['transparent'],
+    features:[{ico:'🥗',l:'Usage',v:'Salade & pâtisserie'},{ico:'🌡️',l:'Four',v:'Compatible'},{ico:'🛡️',l:'Résistance',v:'Verre trempé'},{ico:'🇫🇷',l:'Origine',v:'France'}],
+    arStyle:'picardie', svg:'bowl'
+  },
+  // ── Conservation
+  {
+    id:'freshbox-rect', cat:'conservation', iconic:false, ar:false,
+    name:'Freshbox Rectangulaire', tagline:'Conservation hermétique en verre',
+    desc:'Boîte de conservation rectangulaire avec couvercle hermétique. Passe au four, congélateur et micro-ondes.',
+    price:11.90, unit:'pièce', sizes:['0.5 L','1 L','1.5 L'],
+    colors:['transparent'],
+    features:[{ico:'❄️',l:'Congélateur',v:'Oui'},{ico:'🔥',l:'Four',v:'Oui'},{ico:'📡',l:'Micro-ondes',v:'Oui'},{ico:'🌊',l:'Hermétique',v:'Étanche'}],
+    arStyle:'picardie', svg:'box'
+  },
+  {
+    id:'freshbox-ronde', cat:'conservation', iconic:false, ar:false,
+    name:'Freshbox Ronde', tagline:'Lunch box en verre',
+    desc:'Boîte ronde idéale pour transporter déjeuner et desserts. Design compact et empilable.',
+    price:9.90, unit:'pièce', sizes:['0.5 L','1 L'],
+    colors:['transparent'],
+    features:[{ico:'🥡',l:'Portable',v:'Idéal lunch'},{ico:'🔄',l:'Empilable',v:'Oui'},{ico:'📡',l:'Micro-ondes',v:'Oui'},{ico:'🌊',l:'Étanche',v:'Oui'}],
+    arStyle:'picardie', svg:'box'
+  },
+  // ── Cuisson
+  {
+    id:'ramequin', cat:'cuisson', iconic:false, ar:false,
+    name:'Ramequin', tagline:'Four, micro-ondes & service',
+    desc:'Ramequin en verre borosilicaté. Du four à la table. Résistant aux chocs thermiques extrêmes.',
+    price:4.90, unit:'pièce', sizes:['9 cl','17 cl'],
+    colors:['transparent'],
+    features:[{ico:'🔥',l:'Température',v:'Jusqu\'à 300°C'},{ico:'🌡️',l:'Choc thermique',v:'Résistant'},{ico:'🍽️',l:'Service',v:'Directement'},{ico:'🇫🇷',l:'Origine',v:'France'}],
+    arStyle:'picardie', svg:'cup'
+  },
+  {
+    id:'plat-four', cat:'cuisson', iconic:false, ar:false,
+    name:'Plat à Four', tagline:'Cuisson & présentation',
+    desc:'Plat rectangulaire en verre borosilicaté. Idéal pour gratins, lasagnes et rôtis.',
+    price:18.90, unit:'pièce', sizes:['1 L','1.5 L','2 L'],
+    colors:['transparent'],
+    features:[{ico:'🔥',l:'Four',v:'Jusqu\'à 300°C'},{ico:'🧊',l:'Congélateur',v:'Oui'},{ico:'🍽️',l:'Lave-vaisselle',v:'Oui'},{ico:'🇫🇷',l:'Origine',v:'France'}],
+    arStyle:'picardie', svg:'dish'
+  },
+  // ── Tasses & Bols
+  {
+    id:'bol', cat:'tasses', iconic:false, ar:false,
+    name:'Bol', tagline:'Petit-déjeuner & dessert',
+    desc:'Bol en verre trempé transparent. Idéal pour céréales, soupes et desserts.',
+    price:6.90, unit:'pièce', sizes:['25 cl','35 cl'],
+    colors:['transparent','marine'],
+    features:[{ico:'☕',l:'Usage',v:'Chaud & froid'},{ico:'📡',l:'Micro-ondes',v:'Oui'},{ico:'🛡️',l:'Résistance',v:'Verre trempé'},{ico:'🇫🇷',l:'Origine',v:'France'}],
+    arStyle:'picardie', svg:'cup'
+  },
+  {
+    id:'tasse-expresso', cat:'tasses', iconic:false, ar:false,
+    name:'Tasse Expresso', tagline:'Le café dans un verre',
+    desc:'Petite tasse en verre borosilicaté pour expresso et café court. Garde le café chaud.',
+    price:5.50, unit:'pièce', sizes:['8 cl','10 cl'],
+    colors:['transparent'],
+    features:[{ico:'☕',l:'Volume',v:'8 ou 10 cl'},{ico:'🌡️',l:'Thermique',v:'Borosilicaté'},{ico:'🍽️',l:'Lave-vaisselle',v:'Oui'},{ico:'🇫🇷',l:'Origine',v:'France'}],
+    arStyle:'picardie', svg:'cup'
+  },
+];
+
+// ─────────────────────────────────────────────────────
+//  SVG PRODUITS (illustrations inline)
+// ─────────────────────────────────────────────────────
+const SVGS = {
+  glass: (col='#1a3a6b', op=0.35) => `<svg viewBox="0 0 80 110" xmlns="http://www.w3.org/2000/svg">
+    <defs><linearGradient id="gv" x1="20%" y1="0%" x2="80%" y2="100%">
+      <stop offset="0%" stop-color="${col}" stop-opacity="${op+0.3}"/>
+      <stop offset="60%" stop-color="${col}" stop-opacity="${op*0.6}"/>
+      <stop offset="100%" stop-color="${col}" stop-opacity="${op+0.2}"/>
+    </linearGradient></defs>
+    <path d="M22 8 L58 8 L50 82 L30 82 Z" fill="url(#gv)" stroke="${col}" stroke-width="1.5" opacity="0.9"/>
+    <ellipse cx="40" cy="8" rx="18" ry="5" fill="${col}" opacity="${op+0.4}"/>
+    <ellipse cx="40" cy="82" rx="10" ry="3" fill="${col}" opacity="${op+0.3}"/>
+    <rect x="30" y="82" width="20" height="7" rx="2" fill="${col}" opacity="${op+0.4}"/>
+    <rect x="26" y="89" width="28" height="5" rx="2" fill="${col}" opacity="${op+0.5}"/>
+    <path d="M28 18 Q32 12 36 15" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  </svg>`,
+
+  carafe: (col='#1a3a6b', op=0.35) => `<svg viewBox="0 0 80 140" xmlns="http://www.w3.org/2000/svg">
+    <defs><linearGradient id="gc" x1="15%" y1="0%" x2="85%" y2="100%">
+      <stop offset="0%" stop-color="${col}" stop-opacity="${op+0.35}"/>
+      <stop offset="50%" stop-color="${col}" stop-opacity="${op*0.5}"/>
+      <stop offset="100%" stop-color="${col}" stop-opacity="${op+0.25}"/>
+    </linearGradient></defs>
+    <path d="M30 55 Q18 72 20 98 L60 98 Q62 72 50 55 Z" fill="url(#gc)" stroke="${col}" stroke-width="1.5"/>
+    <rect x="32" y="32" width="16" height="23" rx="2" fill="${col}" opacity="${op+0.35}"/>
+    <path d="M48 40 Q58 36 60 28" fill="none" stroke="${col}" stroke-width="2" stroke-linecap="round"/>
+    <ellipse cx="40" cy="32" rx="8" ry="3" fill="${col}" opacity="${op+0.5}"/>
+    <ellipse cx="40" cy="27" rx="9" ry="7" fill="${col}" opacity="${op+0.45}"/>
+    <ellipse cx="40" cy="22" rx="5" ry="4" fill="${col}" opacity="0.7"/>
+    <path d="M22 68 Q24 80 23 90" stroke="rgba(255,255,255,0.35)" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <rect x="28" y="98" width="24" height="6" rx="2" fill="${col}" opacity="${op+0.5}"/>
+  </svg>`,
+
+  plate: () => `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="50" cy="50" rx="44" ry="44" fill="none" stroke="#1a3a6b" stroke-width="2" opacity="0.3"/>
+    <ellipse cx="50" cy="50" rx="35" ry="35" fill="rgba(26,58,107,0.08)" stroke="#1a3a6b" stroke-width="1.5" opacity="0.5"/>
+    <ellipse cx="50" cy="50" rx="18" ry="18" fill="rgba(26,58,107,0.12)" stroke="#1a3a6b" stroke-width="1" opacity="0.4"/>
+  </svg>`,
+
+  bowl: () => `<svg viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 30 Q12 65 50 65 Q88 65 88 30 Z" fill="rgba(26,58,107,0.12)" stroke="#1a3a6b" stroke-width="1.5" opacity="0.7"/>
+    <ellipse cx="50" cy="30" rx="38" ry="10" fill="rgba(26,58,107,0.08)" stroke="#1a3a6b" stroke-width="1" opacity="0.5"/>
+    <ellipse cx="50" cy="65" rx="22" ry="5" fill="rgba(26,58,107,0.15)" stroke="#1a3a6b" stroke-width="1" opacity="0.5"/>
+  </svg>`,
+
+  box: () => `<svg viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg">
+    <rect x="10" y="20" width="80" height="50" rx="4" fill="rgba(26,58,107,0.08)" stroke="#1a3a6b" stroke-width="1.5" opacity="0.7"/>
+    <rect x="8" y="14" width="84" height="12" rx="4" fill="rgba(26,58,107,0.15)" stroke="#1a3a6b" stroke-width="1.5" opacity="0.8"/>
+    <line x1="10" y1="35" x2="90" y2="35" stroke="#1a3a6b" stroke-width="0.8" opacity="0.25"/>
+  </svg>`,
+
+  cup: () => `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+    <path d="M20 20 L60 20 L54 62 L26 62 Z" fill="rgba(26,58,107,0.12)" stroke="#1a3a6b" stroke-width="1.5" opacity="0.8"/>
+    <ellipse cx="40" cy="20" rx="20" ry="5" fill="rgba(26,58,107,0.15)" stroke="#1a3a6b" stroke-width="1" opacity="0.6"/>
+    <path d="M60 30 Q72 30 72 42 Q72 54 60 50" fill="none" stroke="#1a3a6b" stroke-width="2" opacity="0.5" stroke-linecap="round"/>
+  </svg>`,
+
+  dish: () => `<svg viewBox="0 0 110 70" xmlns="http://www.w3.org/2000/svg">
+    <rect x="8" y="18" width="94" height="40" rx="6" fill="rgba(26,58,107,0.08)" stroke="#1a3a6b" stroke-width="1.5" opacity="0.7"/>
+    <ellipse cx="55" cy="18" rx="47" ry="7" fill="rgba(26,58,107,0.12)" stroke="#1a3a6b" stroke-width="1" opacity="0.5"/>
+    <line x1="8" y1="30" x2="102" y2="30" stroke="#1a3a6b" stroke-width="0.8" opacity="0.2"/>
+  </svg>`,
+};
+
+const COLOR_MAP = {
+  transparent:{ hex:'#c8e6f0', label:'Transparent' },
+  marine:     { hex:'#1a3a6b', label:'Marine' },
+  ambré:      { hex:'#d4820a', label:'Ambré' },
+  prune:      { hex:'#5c1a54', label:'Prune' },
+  givré:      { hex:'#e8f4ff', label:'Givré', border:true },
+};
+
+// ─────────────────────────────────────────────────────
+//  STATE
+// ─────────────────────────────────────────────────────
+let cart        = [];
+let currentProd = null;
+let currentCat  = 'all';
+let detailColor = null;
+let detailSize  = null;
+let arProduct   = null;
+
+// ─────────────────────────────────────────────────────
+//  NAVIGATION
+// ─────────────────────────────────────────────────────
+function showView(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function goHome() {
+  showView('view-home');
+  document.getElementById('detailBuy').classList.remove('show');
+}
+
+function showCart() {
+  renderCart();
+  showView('view-cart');
+}
+
+function filterCat(el, cat) {
+  document.querySelectorAll('.nav-cat').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  currentCat = cat;
+  const filtered = cat === 'all' ? CATALOG : CATALOG.filter(p => p.cat === cat);
+  document.getElementById('gridTitle').textContent =
+    cat === 'all' ? 'Toute la collection' :
+    cat === 'verres' ? 'Nos Verres' :
+    cat === 'vaisselle' ? 'Vaisselle' :
+    cat === 'conservation' ? 'Conservation' :
+    cat === 'cuisson' ? 'Cuisson' : 'Tasses & Bols';
+  renderGrid(filtered);
+}
+
+// ─────────────────────────────────────────────────────
+//  RENDU CATALOGUE
+// ─────────────────────────────────────────────────────
+function renderAll() {
+  renderIconiques();
+  renderGrid(CATALOG);
+}
+
+function renderIconiques() {
+  const el = document.getElementById('iconiquesCarousel');
+  const iconics = CATALOG.filter(p => p.iconic);
+  el.innerHTML = iconics.map(p => {
+    const colHex = COLOR_MAP[p.colors[0]]?.hex || '#1a3a6b';
+    return `<div class="carousel-card" onclick="openDetail('${p.id}')">
+      <div class="carousel-img">${SVGS[p.svg]?.(colHex,0.35)}</div>
+      <div class="carousel-info">
+        <div class="carousel-name">${p.name}</div>
+        <div class="carousel-price">${p.price.toFixed(2)} €<small> / ${p.unit}</small></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderGrid(products) {
+  const el = document.getElementById('productsGrid');
+  el.innerHTML = products.map(p => {
+    const colHex = COLOR_MAP[p.colors[0]]?.hex || '#1a3a6b';
+    const badges = [];
+    if (p.iconic) badges.push(`<span class="product-badge badge-iconic">Iconique</span>`);
+    else if (p.ar) badges.push(`<span class="product-badge badge-ar">AR</span>`);
+    return `<div class="product-card" onclick="openDetail('${p.id}')">
+      <div class="product-img">
+        ${SVGS[p.svg]?.(colHex,0.35)}
+        ${badges.join('')}
+      </div>
+      <div class="product-info">
+        <div class="product-name">${p.name}</div>
+        <div class="product-desc">${p.tagline}</div>
+        <div class="product-footer">
+          <div class="product-price">${p.price.toFixed(2)} €<small> /${p.unit}</small></div>
+          <button class="product-add" onclick="event.stopPropagation();quickAdd('${p.id}')">+</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ─────────────────────────────────────────────────────
+//  DETAIL PRODUIT
+// ─────────────────────────────────────────────────────
+function openDetail(id) {
+  currentProd = CATALOG.find(p => p.id === id);
+  if (!currentProd) return;
+  detailColor = currentProd.colors[0];
+  detailSize  = currentProd.sizes[0];
+
+  const p = currentProd;
+  const colHex = COLOR_MAP[detailColor]?.hex || '#1a3a6b';
+
+  document.getElementById('detailContent').innerHTML = `
+    <div class="detail-img">
+      ${SVGS[p.svg]?.(colHex, 0.38)}
+      ${p.ar ? `<button class="detail-ar-btn" onclick="openAR('${p.id}')">
+        📷 Voir en AR
+      </button>` : ''}
+    </div>
+    <div class="detail-body">
+      <div class="detail-cat">${p.cat.toUpperCase()} · DURALEX®</div>
+      <h1 class="detail-name">${p.name}</h1>
+      <p class="detail-tagline">${p.desc}</p>
+
+      ${p.colors.length > 1 ? `
+        <div class="detail-section-title">Couleur — <span id="colorLabel">${COLOR_MAP[detailColor]?.label}</span></div>
+        <div class="color-swatches">
+          ${p.colors.map(c => `
+            <div class="swatch ${c===detailColor?'active':''}"
+              style="background:${COLOR_MAP[c]?.hex||'#ccc'};${COLOR_MAP[c]?.border?'border:1.5px solid #ccc;':''}"
+              onclick="selectColor('${c}','${id}')"></div>
+          `).join('')}
+        </div>
+      ` : ''}
+
+      ${p.sizes.length > 1 ? `
+        <div class="detail-section-title" style="margin-top:18px">Taille</div>
+        <div class="size-chips">
+          ${p.sizes.map(s => `
+            <div class="size-chip ${s===detailSize?'active':''}" onclick="selectSize('${s}','${id}')">${s}</div>
+          `).join('')}
+        </div>
+      ` : `<div style="margin-top:8px;font-size:12px;color:var(--gris)">${p.sizes[0]}</div>`}
+
+      <div class="detail-features">
+        ${p.features.map(f => `
+          <div class="feature">
+            <div class="feature-ico">${f.ico}</div>
+            <div class="feature-label">${f.l}</div>
+            <div class="feature-val">${f.v}</div>
+          </div>
+        `).join('')}
+      </div>
+
+      <div style="background:var(--bleu-pale);border-radius:4px;padding:14px;display:flex;align-items:center;gap:10px;margin-top:4px">
+        <span style="font-size:20px">🇫🇷</span>
+        <div>
+          <div style="font-size:11px;font-weight:600;color:var(--bleu)">Fabriqué en France</div>
+          <div style="font-size:10px;color:var(--gris)">La Chapelle-Saint-Mesmin · SCOP depuis 2024</div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('detailBuy').innerHTML = `
+    <div class="detail-price-wrap">
+      <div class="detail-price-label">Prix</div>
+      <div class="detail-price-val">${p.price.toFixed(2)} €<span style="font-size:13px;font-weight:400;color:var(--gris);font-family:'Barlow',sans-serif"> / ${p.unit}</span></div>
+    </div>
+    <button class="btn-add-cart" onclick="addToCart('${p.id}')">
+      <span>🛒</span> Ajouter
+    </button>
+  `;
+  document.getElementById('detailBuy').classList.add('show');
+
+  showView('view-detail');
+}
+
+function selectColor(c, id) {
+  detailColor = c;
+  document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('colorLabel').textContent = COLOR_MAP[c]?.label || c;
+  // Mettre à jour l'image
+  const p = CATALOG.find(x => x.id === id);
+  if (!p) return;
+  const colHex = COLOR_MAP[c]?.hex || '#1a3a6b';
+  document.querySelector('.detail-img').innerHTML =
+    SVGS[p.svg]?.(colHex, 0.38) +
+    (p.ar ? `<button class="detail-ar-btn" onclick="openAR('${id}')">📷 Voir en AR</button>` : '');
+}
+
+function selectSize(s, id) {
+  detailSize = s;
+  document.querySelectorAll('.size-chip').forEach(c => c.classList.remove('active'));
+  event.target.classList.add('active');
+}
+
+// ─────────────────────────────────────────────────────
+//  PANIER
+// ─────────────────────────────────────────────────────
+function addToCart(id) {
+  const p = CATALOG.find(x => x.id === id);
+  if (!p) return;
+  const key = `${id}-${detailColor}-${detailSize}`;
+  const existing = cart.find(i => i.key === key);
+  if (existing) existing.qty++;
+  else cart.push({ key, id, name:p.name, color:detailColor, size:detailSize, price:p.price, qty:1, svg:p.svg });
+  updateBadge();
+  showToast(`${p.name} ajouté au panier ✓`);
+}
+
+function quickAdd(id) {
+  const p = CATALOG.find(x => x.id === id);
+  if (!p) return;
+  const key = `${id}-${p.colors[0]}-${p.sizes[0]}`;
+  const existing = cart.find(i => i.key === key);
+  if (existing) existing.qty++;
+  else cart.push({ key, id, name:p.name, color:p.colors[0], size:p.sizes[0], price:p.price, qty:1, svg:p.svg });
+  updateBadge();
+  showToast(`${p.name} ajouté ✓`);
+}
+
+function updateBadge() {
+  const total = cart.reduce((s,i)=>s+i.qty,0);
+  document.querySelectorAll('.badge').forEach(b => {
+    b.textContent = total;
+    total > 0 ? b.classList.add('show') : b.classList.remove('show');
+  });
+}
+
+function updateQty(key, delta) {
+  const idx = cart.findIndex(i => i.key === key);
+  if (idx === -1) return;
+  cart[idx].qty += delta;
+  if (cart[idx].qty <= 0) cart.splice(idx,1);
+  updateBadge();
+  renderCart();
+}
+
+function renderCart() {
+  const total = cart.reduce((s,i) => s + i.price * i.qty, 0);
+  const freeShip = total >= 89;
+
+  if (cart.length === 0) {
+    document.getElementById('cartContent').innerHTML = `
+      <div class="cart-header">
+        <div class="cart-title">Mon Panier</div>
+      </div>
+      <div class="cart-empty">
+        <div class="cart-empty-ico">🛒</div>
+        <div class="cart-empty-txt">Votre panier est vide.<br>Découvrez notre collection.</div>
+        <button class="btn-add-cart" onclick="goHome()" style="margin-top:8px">Découvrir →</button>
+      </div>`;
+    return;
+  }
+
+  document.getElementById('cartContent').innerHTML = `
+    <div class="cart-header">
+      <div class="cart-title">Mon Panier</div>
+      <div class="cart-count">${cart.reduce((s,i)=>s+i.qty,0)} article(s)</div>
+    </div>
+    <div class="cart-items">
+      ${cart.map(item => {
+        const colHex = COLOR_MAP[item.color]?.hex || '#1a3a6b';
+        return `<div class="cart-item">
+          <div class="cart-item-img">${SVGS[item.svg]?.(colHex,0.35)}</div>
+          <div class="cart-item-info">
+            <div class="cart-item-name">${item.name}</div>
+            <div class="cart-item-variant">${COLOR_MAP[item.color]?.label||item.color} · ${item.size}</div>
+            <div class="cart-item-actions">
+              <button class="qty-btn" onclick="updateQty('${item.key}',-1)">−</button>
+              <span class="qty-val">${item.qty}</span>
+              <button class="qty-btn" onclick="updateQty('${item.key}',1)">+</button>
+            </div>
+          </div>
+          <div class="cart-item-price">${(item.price*item.qty).toFixed(2)} €</div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="cart-summary">
+      <div class="cart-row"><span>Sous-total</span><span>${total.toFixed(2)} €</span></div>
+      <div class="cart-row ${freeShip?'free':''}">
+        <span>Livraison</span>
+        <span>${freeShip ? '🎉 Offerte' : `${(89-total).toFixed(2)} € manquants`}</span>
+      </div>
+      ${!freeShip ? `<div class="cart-row" style="font-size:10px;color:var(--gris)"><span>Livraison offerte dès 89 €</span></div>` : ''}
+      <div class="cart-row total"><span>Total</span><span>${total.toFixed(2)} €</span></div>
+    </div>
+    <button class="btn-checkout" onclick="showToast('Redirection vers le paiement sécurisé…')">
+      🔒 Passer commande
+    </button>
+    <div style="text-align:center;padding-bottom:32px">
+      <div style="font-size:10px;color:var(--gris);letter-spacing:1px">VISA · MASTERCARD · PAYPAL · PAIEMENT SÉCURISÉ</div>
+    </div>`;
+}
+
+// ─────────────────────────────────────────────────────
+//  TOAST
+// ─────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 2500);
+}
+
+// ═══════════════════════════════════════════════════════
+//  MODULE AR — intégré dans l'app
+// ═══════════════════════════════════════════════════════
+
+const AR_PAL = {
+  transparent:{ color:0xb8d8f0, opacity:0.38, transmission:0.88, roughness:0.03 },
+  marine:     { color:0x1a3a6b, opacity:0.90, transmission:0.05, roughness:0.08 },
+  ambré:      { color:0xd4820a, opacity:0.90, transmission:0.05, roughness:0.06 },
+  prune:      { color:0x5c1a54, opacity:0.90, transmission:0.05, roughness:0.06 },
+  givré:      { color:0xe0f0ff, opacity:0.26, transmission:0.80, roughness:0.15 },
+};
+const TW=2.0, TD=1.0;
+
+let arStyle     = 'transparent';
+let arPts       = [], arDots = [];
+let arRenderer, arScene, arClock, arBaseCamera, arCameraRig;
+let arGyroEnabled=false, arGyroSupported=false, arGyroRef=null;
+let arGyroRaw={beta:0,gamma:0}, arGyroSmoothed={beta:0,gamma:0};
+const GYRO_SMOOTH=0.12, GYRO_SENS_H=0.6, GYRO_SENS_V=0.5;
+const GYRO_DEAD=0.8, GYRO_MAX=22;
+
+const AR_GUIDE = [
+  {ico:'👆',txt:'Coin <strong style="color:#60a5fa">haut-gauche</strong><br>de la table'},
+  {ico:'↗️',txt:'Coin <strong style="color:#60a5fa">haut-droit</strong><br>de la table'},
+  {ico:'↘️',txt:'Coin <strong style="color:#60a5fa">bas-droit</strong><br>de la table'},
+  {ico:'↙️',txt:'Coin <strong style="color:#60a5fa">bas-gauche</strong><br>de la table'},
+];
+
+function openAR(productId) {
+  arProduct = productId ? CATALOG.find(p=>p.id===productId) : null;
+
+  if (arProduct) {
+    document.getElementById('arProdName').textContent = arProduct.name;
+    document.getElementById('arProdSub').textContent  = arProduct.tagline.substring(0,32)+'…';
+    arStyle = arProduct.colors[0];
+  } else {
+    document.getElementById('arProdName').textContent = 'Composition de table';
+    document.getElementById('arProdSub').textContent  = 'RÉALITÉ AUGMENTÉE';
+    arStyle = 'transparent';
+  }
+
+  const colors = arProduct ? arProduct.colors : Object.keys(AR_PAL);
+  document.getElementById('arChips').innerHTML = colors.map((c,i) =>
+    `<div class="ar-chip ${i===0?'on':''}" onclick="arSetStyle(this,'${c}')">${COLOR_MAP[c]?.label||c}</div>`
+  ).join('');
+
+  // Afficher d'abord l'écran intermédiaire
+  // iOS Safari : getUserMedia DOIT être déclenché directement par un tap
+  // (pas via requestAnimationFrame ni setTimeout)
+  document.getElementById('view-ar').style.display = 'block';
+  document.getElementById('ar-start-screen').style.display = 'flex';
+  document.getElementById('ar-tap').classList.add('off');
+  document.getElementById('ar-canvas').style.display = 'none';
+}
+
+// Appelé directement par le tap utilisateur → iOS autorise getUserMedia
+async function arStartCamera() {
+  document.getElementById('ar-start-screen').style.display = 'none';
+  await arInit();
+}
+
+function closeAR() {
+  // Stopper le rendu
+  if (arRenderer) arRenderer.setAnimationLoop(null);
+
+  // Stopper la caméra
+  const v = document.getElementById('ar-video');
+  if (v.srcObject) {
+    v.srcObject.getTracks().forEach(t => t.stop());
+    v.srcObject = null;
+  }
+
+  // Stopper le gyro
+  window.removeEventListener('deviceorientation', arOnGyro, true);
+  arGyroEnabled = false; arGyroRef = null;
+  arGyroSupported = false;
+
+  // Cacher la vue AR
+  document.getElementById('view-ar').style.display = 'none';
+  document.getElementById('ar-canvas').style.display = 'none';
+
+  // Nettoyer la scène et les points
+  arClear();
+
+  // Remettre l'instruction à zéro
+  document.getElementById('arInstr').classList.remove('off');
+  document.getElementById('arIico').textContent = '👆';
+  document.getElementById('arItxt').innerHTML = 'Touchez le coin<br><strong style="color:#60a5fa">haut-gauche</strong> de la table';
+  document.getElementById('arIcnt').textContent = '0 / 4 points';
+  document.getElementById('arGyroBtn').classList.remove('on');
+  document.getElementById('arGyroBtn').textContent = '◎ Gyro';
+  document.getElementById('ar-start-screen').style.display = 'none';
+}
+
+async function arInit() {
+  arClear();
+  arScene = new THREE.Scene();
+  arClock = new THREE.Clock();
+
+  const canvas = document.getElementById('ar-canvas');
+  canvas.style.display = 'none';
+
+  if (!arRenderer) {
+    arRenderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+    arRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    arRenderer.shadowMap.enabled = true;
+    arRenderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  }
+  arRenderer.setSize(window.innerWidth, window.innerHeight);
+  arRenderer.setClearColor(0x000000, 0);
+  arRenderer.setAnimationLoop(null);
+
+  // ── Caméra : appel direct dans la pile du tap utilisateur
+  // iOS Safari autorise getUserMedia uniquement depuis un geste direct
+  const v = document.getElementById('ar-video');
+  try {
+    // Essai 1 : caméra arrière
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: { ideal: 'environment' } },
+      audio: false
+    });
+    v.srcObject = stream;
+    await v.play();
+    console.log('✓ Caméra arrière active');
+  } catch(e1) {
+    console.warn('Caméra arrière échouée:', e1.name, e1.message);
+    try {
+      // Essai 2 : n'importe quelle caméra
+      const stream2 = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+      v.srcObject = stream2;
+      await v.play();
+      console.log('✓ Caméra (fallback) active');
+    } catch(e2) {
+      console.error('✗ Toutes caméras échouées:', e2.name, e2.message);
+      // Afficher l'erreur à l'utilisateur
+      document.getElementById('ar-start-screen').style.display = 'flex';
+      document.getElementById('ar-start-screen').innerHTML = `
+        <div style="text-align:center;padding:32px;color:#fff">
+          <div style="font-size:32px;margin-bottom:16px">📷</div>
+          <div style="font-family:serif;font-size:18px;margin-bottom:12px">Caméra indisponible</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.5);max-width:260px;line-height:1.7;margin-bottom:8px">
+            <strong>${e2.name}</strong><br>${e2.message}
+          </div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:24px">
+            Vérifiez Réglages → Safari → Caméra → Autoriser
+          </div>
+          <button onclick="closeAR()" style="padding:12px 24px;background:#fff;color:#1a3a6b;border:none;border-radius:3px;font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer">Fermer</button>
+        </div>`;
+      return;
+    }
+  }
+
+  // ── Gyro Android
+  if (typeof DeviceOrientationEvent !== 'undefined' &&
+      typeof DeviceOrientationEvent.requestPermission !== 'function') {
+    arGyroSupported = true;
+    arStartGyro();
+  }
+
+  arEnableTap();
+}
+
+function arEnableTap() {
+  const tap = document.getElementById('ar-tap');
+  tap.classList.remove('off');
+  tap.ontouchend = e => { e.preventDefault(); const t=e.changedTouches[0]; arAddPt(t.clientX,t.clientY); };
+  tap.onclick    = e => arAddPt(e.clientX, e.clientY);
+}
+
+function arAddPt(x,y) {
+  if (arPts.length>=4) return;
+  arPts.push({x,y});
+  const d=document.createElement('div');
+  d.className='ar-dot'; d.style.left=x+'px'; d.style.top=y+'px'; d.textContent=arPts.length;
+  document.getElementById('view-ar').appendChild(d); arDots.push(d);
+  arUpdateSVG();
+
+  if (arPts.length<4) {
+    const g=AR_GUIDE[arPts.length];
+    document.getElementById('arIico').textContent=g.ico;
+    document.getElementById('arItxt').innerHTML=g.txt;
+    document.getElementById('arIcnt').textContent=arPts.length+' / 4 points';
+  } else {
+    document.getElementById('ar-tap').classList.add('off');
+    document.getElementById('arInstr').classList.add('off');
+    arBuildScene();
+    // iOS gyro
+    if (typeof DeviceOrientationEvent!=='undefined' &&
+        typeof DeviceOrientationEvent.requestPermission==='function') {
+      DeviceOrientationEvent.requestPermission().then(r => {
+        if (r==='granted') { arGyroSupported=true; arStartGyro(); }
+      }).catch(()=>{});
+    }
+  }
+}
+
+function arUpdateSVG() {
+  ['ar-l01','ar-l12','ar-l23','ar-l30'].forEach((id,i) => {
+    const a=arPts[i], b=arPts[(i+1)%4];
+    if(!a||!b) return;
+    const l=document.getElementById(id);
+    l.setAttribute('x1',a.x); l.setAttribute('y1',a.y);
+    l.setAttribute('x2',b.x); l.setAttribute('y2',b.y);
+    l.setAttribute('opacity','1');
+  });
+  if (arPts.length===4) {
+    const poly=document.getElementById('ar-poly');
+    poly.setAttribute('points',arPts.map(p=>p.x+','+p.y).join(' '));
+    poly.setAttribute('opacity','1');
+  }
+}
+
+function arBuildScene() {
+  document.getElementById('ar-canvas').style.display='block';
+  while(arScene.children.length) arScene.remove(arScene.children[0]);
+
+  arScene.add(new THREE.AmbientLight(0xffffff,1.1));
+  const sun=new THREE.DirectionalLight(0xfff8f0,1.3);
+  sun.position.set(2,6,3); sun.castShadow=true;
+  sun.shadow.mapSize.set(1024,1024);
+  sun.shadow.camera.left=-3; sun.shadow.camera.right=3;
+  sun.shadow.camera.top=2; sun.shadow.camera.bottom=-2;
+  arScene.add(sun);
+  arScene.add(new THREE.HemisphereLight(0xddeeff,0x8899bb,0.5));
+
+  const floor=new THREE.Mesh(
+    new THREE.PlaneGeometry(TW*3,TD*3),
+    new THREE.ShadowMaterial({opacity:0.20})
+  );
+  floor.rotation.x=-Math.PI/2; floor.receiveShadow=true; arScene.add(floor);
+
+  arBaseCamera = arCalibrateCamera();
+  arCameraRig  = new THREE.Group();
+  arScene.add(arCameraRig);
+
+  const comp = arMakeComposition(AR_PAL[arStyle] || AR_PAL.transparent);
+  arScene.add(comp);
+
+  let startTime=null;
+  arRenderer.setAnimationLoop((ts) => {
+    if (!startTime) startTime=ts;
+    const e=(ts-startTime)/1000;
+    const et=Math.min(e/0.8,1);
+    comp.scale.y=Math.max(0.001,arEaseBack(et));
+    comp.children.forEach((c,i) => {
+      if (c.userData.float) c.position.y=c.userData.baseY+Math.sin(e*0.65+i)*0.006;
+    });
+    arApplyGyro();
+    const effCam=arBaseCamera.clone();
+    if (arGyroEnabled && arCameraRig) {
+      const rm=new THREE.Matrix4().makeRotationFromEuler(arCameraRig.rotation);
+      effCam.position.applyMatrix4(rm);
+      effCam.quaternion.premultiply(new THREE.Quaternion().setFromEuler(arCameraRig.rotation));
+    }
+    arRenderer.render(arScene, effCam);
+  });
+
+  if (arGyroRef===null && arGyroEnabled) arGyroRef={...arGyroRaw};
+}
+
+function arEaseBack(t) {
+  if(t>=1)return 1; const c1=1.70158,c3=c1+1;
+  return 1+c3*Math.pow(t-1,3)+c1*Math.pow(t-1,2);
+}
+
+function arCalibrateCamera() {
+  const W=window.innerWidth, H=window.innerHeight;
+  const [TL,TR,BR,BL]=arPts;
+  const topW=Math.hypot(TR.x-TL.x,TR.y-TL.y);
+  const botW=Math.hypot(BR.x-BL.x,BR.y-BL.y);
+  const leftH=Math.hypot(BL.x-TL.x,BL.y-TL.y);
+  const rightH=Math.hypot(BR.x-TR.x,BR.y-TR.y);
+  const avgW=(topW+botW)/2, avgH=(leftH+rightH)/2;
+  const cx2d=(TL.x+TR.x+BR.x+BL.x)/4, cy2d=(TL.y+TR.y+BR.y+BL.y)/4;
+  const conv=Math.abs(botW-topW);
+  const focalPx=conv<5?H*1.5:clamp((topW*avgH)/conv,H*0.4,H*2.5);
+  const fovY=2*Math.atan(H*0.5/focalPx)*180/Math.PI;
+  const FOV=clamp(fovY,25,85);
+  const tanHalf=Math.tan(FOV*Math.PI/360);
+  const camDist=(TW*W)/(2*avgW*tanHalf);
+  const aspect=W/H;
+  const pitchRad=Math.atan2(avgH/H,avgW/W/aspect);
+  const camY=camDist*Math.sin(pitchRad), camZ=camDist*Math.cos(pitchRad);
+  const midTopX=(TL.x+TR.x)/2, midBotX=(BL.x+BR.x)/2;
+  const midTopY=(TL.y+TR.y)/2, midBotY=(BL.y+BR.y)/2;
+  const rollRad=-Math.atan2(midBotX-midTopX,midBotY-midTopY)*0.35;
+  const ndcX=cx2d/W-0.5, ndcY=cy2d/H-0.5;
+  const camX=ndcX*camDist*tanHalf*2.2, camZoff=ndcY*camDist*0.5;
+  const cam=new THREE.PerspectiveCamera(FOV,W/H,0.01,100);
+  cam.position.set(camX,camY,camZ+camZoff);
+  const target=new THREE.Vector3(camX*0.3,0,0);
+  cam.lookAt(target);
+  if(Math.abs(rollRad)>0.005) cam.rotateZ(rollRad);
+  cam.updateProjectionMatrix();
+  const c3d=[new THREE.Vector3(-TW/2,0,-TD/2),new THREE.Vector3(TW/2,0,-TD/2),
+    new THREE.Vector3(TW/2,0,TD/2),new THREE.Vector3(-TW/2,0,TD/2)];
+  let ex=0,ey=0;
+  c3d.forEach((v,i)=>{
+    const p=v.clone().project(cam);
+    ex+=(arPts[i].x-(p.x+1)/2*W)/4; ey+=(arPts[i].y-(-p.y+1)/2*H)/4;
+  });
+  cam.position.x+=ex/W*TW*0.6; cam.position.z-=ey/H*TD*0.4;
+  cam.lookAt(target); cam.updateProjectionMatrix();
+  return cam;
+}
+
+// Modèles 3D
+function arMatGlass(p,m=1){
+  return new THREE.MeshPhysicalMaterial({
+    color:p.color,transparent:true,opacity:p.opacity*m,
+    roughness:p.roughness,metalness:0,transmission:p.transmission,
+    thickness:0.5,reflectivity:0.9,side:THREE.DoubleSide
+  });
+}
+function arPicardie(p,s=1){
+  const pts2d=[[0,0],[0.020,0],[0.022,0.006],[0.024,0.018],[0.027,0.040],[0.031,0.068],[0.034,0.094],[0.037,0.116]]
+    .map(([r,h])=>new THREE.Vector2(r*s,h*s));
+  const g=new THREE.Group();
+  const b=new THREE.Mesh(new THREE.LatheGeometry(pts2d,36),arMatGlass(p)); b.castShadow=true; g.add(b);
+  const lip=new THREE.Mesh(new THREE.TorusGeometry(0.037*s,0.0022*s,10,36),arMatGlass(p,1.15));
+  lip.rotation.x=Math.PI/2; lip.position.y=0.116*s; lip.castShadow=true; g.add(lip);
+  const base=new THREE.Mesh(new THREE.CylinderGeometry(0.021*s,0.019*s,0.010*s,36),arMatGlass(p,1.2));
+  base.position.y=0.005*s; base.castShadow=true; g.add(base);
+  return g;
+}
+function arGigogne(p){
+  const pts2d=[[0,0],[0.018,0],[0.020,0.008],[0.038,0.040],[0.050,0.085],[0.052,0.120],[0.044,0.158],[0.026,0.192],[0.016,0.215],[0.014,0.232],[0.018,0.248],[0.020,0.255]]
+    .map(([r,h])=>new THREE.Vector2(r,h));
+  const g=new THREE.Group();
+  const b=new THREE.Mesh(new THREE.LatheGeometry(pts2d,36),arMatGlass(p,0.82)); b.castShadow=true; g.add(b);
+  const s=new THREE.Mesh(new THREE.SphereGeometry(0.015,20,20),arMatGlass(p)); s.position.y=0.274; s.castShadow=true; g.add(s);
+  const base=new THREE.Mesh(new THREE.CylinderGeometry(0.022,0.018,0.009,36),arMatGlass(p,1.2)); base.position.y=0.004; g.add(base);
+  return g;
+}
+function arPlacemat(){
+  const g=new THREE.Group();
+  const d=new THREE.Mesh(new THREE.CircleGeometry(0.17,64),new THREE.MeshStandardMaterial({color:0xfaf8f5,roughness:0.88,side:THREE.DoubleSide}));
+  d.rotation.x=-Math.PI/2; d.position.y=0.0005; d.receiveShadow=true; g.add(d);
+  const r=new THREE.Mesh(new THREE.RingGeometry(0.153,0.17,64),new THREE.MeshBasicMaterial({color:0x1a3a6b,side:THREE.DoubleSide,transparent:true,opacity:0.85}));
+  r.rotation.x=-Math.PI/2; r.position.y=0.001; g.add(r);
+  return g;
+}
+function arCutlery(s=1){
+  const m=new THREE.MeshStandardMaterial({color:0xd8d0c8,metalness:0.88,roughness:0.10});
+  const g=new THREE.Group();
+  const k=new THREE.Mesh(new THREE.BoxGeometry(0.006,0.001,0.145),m); k.position.set(s*0.006,0.0005,0); k.castShadow=true; g.add(k);
+  const f=new THREE.Mesh(new THREE.BoxGeometry(0.005,0.001,0.130),m); f.position.set(-s*0.006,0.0005,0.005); f.castShadow=true; g.add(f);
+  return g;
+}
+function arMakeComposition(pal){
+  const g=new THREE.Group();
+  [{x:-TW*0.27,z:TD*0.26},{x:TW*0.27,z:TD*0.26}].forEach(pos=>{
+    const pm=arPlacemat(); pm.position.set(pos.x,0,pos.z); g.add(pm);
+    const gl=arPicardie(pal,1); gl.position.set(pos.x,0,pos.z); gl.userData={float:true,baseY:0}; g.add(gl);
+    const cl=arCutlery(-1); cl.position.set(pos.x-0.23,0,pos.z); g.add(cl);
+    const cr=arCutlery(1); cr.position.set(pos.x+0.21,0,pos.z); g.add(cr);
+  });
+  [{x:-TW*0.27},{x:TW*0.27}].forEach(pos=>{
+    const wg=arPicardie(pal,0.80); wg.position.set(pos.x,0,-TD*0.20); wg.userData={float:true,baseY:0}; g.add(wg);
+  });
+  const c=arGigogne(pal); c.position.set(0,0,-TD*0.02); c.userData={float:true,baseY:0}; g.add(c);
+  return g;
+}
+
+// Gyro AR
+function arStartGyro(){
+  window.addEventListener('deviceorientation',arOnGyro,true);
+  arGyroEnabled=true; arGyroRef=null;
+  document.getElementById('arGyroBtn').classList.add('on');
+  document.getElementById('arGyroBtn').textContent='◎ Gyro ON';
+}
+function arOnGyro(e){
+  arGyroRaw.beta=e.beta||0; arGyroRaw.gamma=e.gamma||0;
+  if(!arGyroRef && arPts.length===4) arGyroRef={...arGyroRaw};
+}
+function arApplyGyro(){
+  if(!arGyroEnabled||!arGyroRef||!arCameraRig) return;
+  let db=clamp(arGyroRaw.beta-arGyroRef.beta,-GYRO_MAX,GYRO_MAX);
+  let dg=clamp(arGyroRaw.gamma-arGyroRef.gamma,-GYRO_MAX,GYRO_MAX);
+  if(Math.abs(db)<GYRO_DEAD) db=0;
+  if(Math.abs(dg)<GYRO_DEAD) dg=0;
+  const tb=db*GYRO_SENS_V*Math.PI/180, tg=dg*GYRO_SENS_H*Math.PI/180;
+  arGyroSmoothed.beta+=(tb-arGyroSmoothed.beta)*GYRO_SMOOTH;
+  arGyroSmoothed.gamma+=(tg-arGyroSmoothed.gamma)*GYRO_SMOOTH;
+  arCameraRig.rotation.x=-arGyroSmoothed.beta;
+  arCameraRig.rotation.z=-arGyroSmoothed.gamma;
+}
+function arToggleGyro(){
+  arGyroEnabled=!arGyroEnabled;
+  const btn=document.getElementById('arGyroBtn');
+  if(arGyroEnabled){ arGyroRef=null; btn.textContent='◎ Gyro ON'; btn.classList.add('on'); }
+  else { arGyroSmoothed={beta:0,gamma:0}; if(arCameraRig){arCameraRig.rotation.x=0;arCameraRig.rotation.z=0;} btn.textContent='◎ Gyro'; btn.classList.remove('on'); }
+}
+function arSetStyle(el,s){
+  arStyle=s;
+  document.querySelectorAll('.ar-chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+  if(arPts.length===4) arBuildScene();
+}
+function arReset(){
+  if(arRenderer) arRenderer.setAnimationLoop(null);
+  arClear();
+  document.getElementById('ar-canvas').style.display='none';
+  document.getElementById('arInstr').classList.remove('off');
+  document.getElementById('arIico').textContent='👆';
+  document.getElementById('arItxt').innerHTML='Touchez le coin<br><strong style="color:#60a5fa">haut-gauche</strong> de la table';
+  document.getElementById('arIcnt').textContent='0 / 4 points';
+  arGyroRef=null;
+  arEnableTap();
+}
+function arClear(){
+  arDots.forEach(d=>d.remove()); arDots=[]; arPts=[];
+  ['ar-l01','ar-l12','ar-l23','ar-l30'].forEach(id=>document.getElementById(id).setAttribute('opacity','0'));
+  document.getElementById('ar-poly').setAttribute('points','').setAttribute('opacity','0');
+  document.getElementById('ar-tap').classList.remove('off');
+  if(arScene) while(arScene.children.length) arScene.remove(arScene.children[0]);
+}
+function arAddToCart(){
+  if(!arProduct){ showToast('Sélectionnez un produit depuis le catalogue'); return; }
+  const key=`${arProduct.id}-${arStyle}-${arProduct.sizes[0]}`;
+  const existing=cart.find(i=>i.key===key);
+  if(existing) existing.qty++;
+  else cart.push({key,id:arProduct.id,name:arProduct.name,color:arStyle,size:arProduct.sizes[0],price:arProduct.price,qty:1,svg:arProduct.svg});
+  updateBadge();
+  showToast(`${arProduct.name} ajouté au panier ✓`);
+}
+
+function clamp(v,min,max){return Math.max(min,Math.min(max,v))}
+
+// ─────────────────────────────────────────────────────
+//  INIT
+// ─────────────────────────────────────────────────────
+renderAll();
+</script>
+</body>
+</html>
